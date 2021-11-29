@@ -1,7 +1,14 @@
-.false input {
-  border-color: red;
+.false {
+  color: red !important;
 }
-.false span {
-  background-color: #f8d7da;
-  color: red;
+/* input {
+  background-color: #7c7c7c !important;
+  color: white !important;
 }
+textarea {
+  background-color: #7c7c7c !important;
+  color: white !important;
+}
+label {
+  color: white !important;
+} */

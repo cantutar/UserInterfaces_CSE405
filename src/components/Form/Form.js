@@ -4,6 +4,7 @@ import { Alert } from "react-bootstrap";
 import FacebookButton from "../UI/Buttons/FacebookButton";
 import GoogleButton from "../UI/Buttons/GoogleButton";
 import classes from "./SignupForm.module.css";
+import validator from "validator";
 
 function SignupForm(props) {
   const [errorType, setErrorType] = useState("");
@@ -15,10 +16,16 @@ function SignupForm(props) {
   const [errorAdress, setErrorAdress] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
   const [errorPass, setErrorPass] = useState(false);
+  const [errorInvalidPass, setErrorInvalidPass] = useState(false);
+  const nameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/;
+  const surnameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/;
+
+  const passRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,30}$/;
 
   const [Name, setName] = useState("");
   function nameChangeHandler(e) {
-    setName(e.target.value.trim());
+    setName(e.target.value);
   }
 
   const [Surname, setSurname] = useState("");
@@ -35,6 +42,12 @@ function SignupForm(props) {
   function passwordChangeHandler(e) {
     setPassword(e.target.value.trim());
   }
+
+  const [passCheck, setPassCheck] = useState("");
+  function passwordCheckChangeHandler(e) {
+    setPassCheck(e.target.value.trim());
+  }
+
   const [phone, setPhone] = useState("");
   function phoneChangeHandler(e) {
     setPhone(e.target.value);
@@ -47,98 +60,102 @@ function SignupForm(props) {
   function onSubmitHandler(e) {
     e.preventDefault();
 
-    //! Name için regex
+    //! Name için sorgu
     if (Name === "" || null) {
       setShowError(true);
       setErrorName(true);
       setErrorType("danger");
-      return setErrorMessage("You can not leave blank this area...");
+      return setErrorMessage("You cannot leave blank Name area...");
     } else {
-      const nameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/;
       if (nameRegex.test(Name) === true) {
         setShowError(false);
-        const surnameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/;
+        //!Surname için sorgu
         if (Surname === "" || null) {
           setShowError(true);
-          setErrorType("danger");
           setErrorSurname(true);
-          setErrorMessage("You can not leave blank this area...");
-          return console.log("buraya girdi soyisim");
+          setErrorType("danger");
+          return setErrorMessage("You cannot leave blank Surname area...");
         } else {
           if (surnameRegex.test(Surname) === true) {
             setShowError(false);
-          } else {
-            //!email için regex
+            //!email sorgu
             if (Email === "" || null) {
               setShowError(true);
               setErrorEmail(true);
               setErrorType("danger");
-              console.log("buraya girdi email");
-              return setErrorMessage("You can not leave blank email area...");
+              return setErrorMessage("You cannot leave blank Email area...");
             } else {
-              const emailRegex =
-                /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
-              if (emailRegex.test(Email) === true) {
+              if (validator.isEmail(Email) === true) {
                 setShowError(false);
-                //! password için regex
+                //!pass sorgu
                 if (Password === "" || null) {
-                  setShowError(true);
-                  setErrorType("danger");
-                  return setErrorMessage(
-                    "You cannot leave blank password area..."
-                  );
-                } else {
-                  const passRegex =
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,30}$/;
-                  if (passRegex.test(Password) === true) {
-                    setShowError(false);
-                  } else {
-                    setShowError(true);
-                    setErrorType("danger");
-                    setErrorMessage(() => {
-                      return (
-                        <div className="row">
-                          <p>* Min 1 uppercase letter.</p>
-                          <p>* Min 1 lowercase letter.</p>
-                          <p>* Min 1 special character.</p>
-                          <p>* Min 1 number.</p>
-                          <p>* Contains no space.</p>
-                          <p>* Min 8 characters.</p>
-                          <p>* Max 30 characters.</p>
-                        </div>
-                      );
-                    });
-                  }
                 }
               } else {
                 setShowError(true);
+                setErrorEmail(true);
                 setErrorType("danger");
-                setErrorMessage(() => {
+                return setErrorMessage(() => {
                   return (
-                    <div className="row">
-                      <p>Allah</p>
+                    <div>
+                      <p>
+                        Please enter a valid E-mail...{" "}
+                        <span>
+                          Ex: <ins>test@test.com</ins>
+                        </span>
+                      </p>
                     </div>
                   );
                 });
               }
             }
+          } else {
+            setShowError(true);
+            setErrorSurname(true);
+            setErrorType("danger");
+            return setErrorMessage(() => {
+              return (
+                <div className="row">
+                  <p>
+                    * First character <mark>MUST</mark> be capital.
+                    <span>
+                      Ex: <ins>sTatHam</ins> or like <ins>MEhMeT</ins> is not
+                      allowed.
+                    </span>
+                  </p>
+                  <p>
+                    * Supports English alphabets only.{" "}
+                    <span>
+                      Ex: <ins>ş,ç,ğ</ins> is not allowed.
+                    </span>
+                  </p>
+                  <p>* Numbers not allowed.</p>
+                  <p>
+                    * No leading or trailing spaces are allowed, empty string is
+                    NOT allowed.
+                  </p>
+                </div>
+              );
+            });
           }
         }
       } else {
-        console.log("isim1 buraya girdi");
         setShowError(true);
+        setErrorName(true);
         setErrorType("danger");
-        setErrorMessage(() => {
+        return setErrorMessage(() => {
           return (
             <div className="row">
               <p>
-                * First character is <mark>MUST</mark> be capital.
+                * First character <mark>MUST</mark> be capital.
+                <span>
+                  Ex: <ins>sTeWaRT</ins> or like <ins>MEhMeT</ins> is not
+                  allowed.
+                </span>
               </p>
               <p>
                 * Supports English alphabets only.{" "}
                 <span>
-                  Ex: <del>sTeWaRT</del> or like <del>MEhMeT</del> is not
-                  allowed.
+                  Ex: <ins>ş,ç,ğ</ins> is not allowed.
                 </span>
               </p>
               <p>* Numbers not allowed.</p>
@@ -152,12 +169,14 @@ function SignupForm(props) {
       }
     }
 
-    console.log(Name, Surname, Password, Email, phone, adress);
-    setSurname("");
+    console.log(Name, Surname, Password, passCheck, Email, phone, adress);
     setName("");
+    setSurname("");
     setEmail("");
     setPassword("");
+    setPassCheck("");
     setPhone("");
+    setAdress("");
   }
   return (
     <form onSubmit={onSubmitHandler}>
@@ -168,111 +187,144 @@ function SignupForm(props) {
         <FacebookButton />
       </div>
       <div className="row mt-5 mb-2">
-        <h4 className="text-center">Or...Sign up with Email.</h4>
+        <h4 className="text-center text-white">
+          Or... <br /> <br /> Sign up with Email.
+        </h4>
       </div>
       <hr />
       <div className="form">
-        <div className="row">
-          <div
-            class={`input-group mb-3 ${errorName ? `${classes.false}` : null}`}
-          >
-            <span class="input-group-text" id="name">
-              <strong>Name</strong>
-            </span>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="User's Surname"
-              value={Name}
-              onChange={nameChangeHandler}
-            />
+        {/* Name */}
+        <div className="row g-2">
+          <div className="col-md">
+            <div className="form-floating mb-3">
+              <input
+                type="text"
+                className={`form-control ${
+                  errorName ? `is-invalid ${classes.false}` : null
+                }`}
+                placeholder="User's Name"
+                value={Name}
+                onChange={nameChangeHandler}
+                id="name"
+              />
+              <label
+                htmlFor="name"
+                className={`${
+                  errorName ? `is-invalid ${classes.false}` : null
+                }`}
+              >
+                Name
+              </label>
+            </div>
+          </div>
+          <div className="col-md">
+            {/* Surname */}
+            <div className="form-floating mb-3">
+              <input
+                type="text"
+                className={`form-control ${errorSurname ? `is-invalid` : null}`}
+                placeholder="User's Surname"
+                value={Surname}
+                onChange={surnameChangeHandler}
+                id="surname"
+              />
+              <label
+                htmlFor="surname"
+                className={`${
+                  errorSurname ? `is-invalid ${classes.false}` : null
+                }`}
+              >
+                Surname
+              </label>
+            </div>
           </div>
         </div>
-        <div className="row">
-          <div
-            class={`input-group mb-3 ${
-              errorSurname ? `${classes.false}` : null
-            }`}
+        {/* email */}
+        <div className="form-floating mb-3">
+          <input
+            type="email"
+            className={`form-control ${errorEmail ? `is-invalid` : null}`}
+            placeholder="E-mail"
+            value={Email}
+            onChange={emailChangeHandler}
+            id="mail"
+          />
+          <label
+            htmlFor="mail"
+            className={`${errorEmail ? `${classes.false}` : null}`}
           >
-            <span class="input-group-text" id="surname">
-              <strong>Surname</strong>
-            </span>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="User's Surname"
-              value={Surname}
-              onChange={surnameChangeHandler}
-            />
+            E-mail
+          </label>
+        </div>
+        {/* pass */}
+        <div className="row g-2">
+          <div className="col-md">
+            <div className="form-floating mb-3">
+              <input
+                type="password"
+                className={`form-control ${errorPass ? "is-invalid" : null}`}
+                placeholder="Password"
+                value={Password}
+                onChange={passwordChangeHandler}
+                id="pass"
+              />
+              <label
+                htmlFor="pass"
+                className={`${
+                  errorPass ? `is-invalid ${classes.false}` : null
+                }`}
+              >
+                Password
+              </label>
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="form-floating mb-3">
+              <input
+                type="password"
+                className={`form-control ${
+                  errorInvalidPass ? "is-invalid" : null
+                }`}
+                placeholder="Password"
+                value={passCheck}
+                onChange={passwordCheckChangeHandler}
+                id="passCheck"
+              />
+              <label
+                htmlFor="passCheck"
+                className={`${
+                  errorInvalidPass ? `is-invalid ${classes.false}` : null
+                }`}
+              >
+                Password Again
+              </label>
+            </div>
           </div>
         </div>
-        <div className="row">
-          <div
-            class={`input-group mb-3 ${errorEmail ? `${classes.false}` : null}`}
-          >
-            <span class="input-group-text" id="email">
-              <strong>Email</strong>
-            </span>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="E-mail"
-              value={Email}
-              onChange={emailChangeHandler}
-            />
-          </div>
+        {/* phone */}
+        <div className="form-floating mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Phone number"
+            value={phone}
+            onChange={phoneChangeHandler}
+            id="phone"
+            pattern="/(\+\d{1,3}\s?)?((\(\d{3}\)\s?)|(\d{3})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?/g"
+          />
+          <label htmlFor="phone">Phone Number</label>
         </div>
-        <div className="row">
-          <div
-            class={`input-group mb-3 ${errorPass ? `${classes.false}` : null}`}
-          >
-            <span class="input-group-text" id="pass">
-              <strong>Password</strong>
-            </span>
-            <input
-              type="password"
-              class="form-control"
-              placeholder="Password"
-              value={Password}
-              onChange={passwordChangeHandler}
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div
-            class={`input-group mb-3 ${errorPhone ? `${classes.false}` : null}`}
-          >
-            <span class="input-group-text" id="phone">
-              <strong>Phone</strong>
-            </span>
-            <input
-              type="number"
-              class="form-control"
-              placeholder="Phone number"
-              value={phone}
-              onChange={phoneChangeHandler}
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div class="input-group mb-3">
-            <span
-              class={`input-group mb-3 ${
-                errorAdress ? `${classes.false}` : null
-              }`}
-              id="adress"
-            >
-              <strong>Adress</strong>
-            </span>
-            <textarea
-              rows={5}
-              type="textarea"
-              class="form-control"
-              placeholder="Please enter Your Adress..."
-              value={adress}
-              onChange={adressChangeHandler}
-            />
-          </div>
+        <div className="form-floating mb-3">
+          <textarea
+            style={{ height: "150px" }}
+            type="textarea"
+            className="form-control"
+            placeholder="Please enter Your Adress..."
+            value={adress}
+            onChange={adressChangeHandler}
+            id="adress"
+          />
+          <label htmlFor="adress">Adress</label>
         </div>
       </div>
       {
@@ -283,7 +335,8 @@ function SignupForm(props) {
               setErrorName(false);
               setErrorSurname(false);
               setErrorEmail(false);
-              setErrorName(false);
+              setErrorPass(false);
+              setErrorInvalidPass(false);
               setErrorPhone(false);
               setErrorAdress(false);
             }}
@@ -295,7 +348,7 @@ function SignupForm(props) {
         </div>
       }
       <div className="d-grid">
-        <button type="submit" className="btn btn-outline-dark btn-block">
+        <button type="submit" className="btn btn-outline-light col-6 mx-auto">
           Sign up
         </button>
       </div>

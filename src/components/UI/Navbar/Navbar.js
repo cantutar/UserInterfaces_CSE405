@@ -4,18 +4,18 @@ import { useState } from "react";
 function Navbar(props) {
   const [toggle, settoggle] = useState(false);
   const [mode, setMode] = useState("dark");
-  const [icon, setIcon] = useState("☀️");
+  const [icon, setIcon] = useState("🌙");
 
   function onClickHandler() {
     if (toggle === false) {
       setMode("light");
       settoggle(true);
-      setIcon("🌙");
+      setIcon("☀️");
       document.body.style.background = "#121212";
     } else {
       setMode("dark");
       settoggle(false);
-      setIcon("☀️");
+      setIcon("🌙");
       document.body.style.background = "white";
     }
   }
