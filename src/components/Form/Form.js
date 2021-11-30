@@ -49,8 +49,38 @@ function SignupForm(props) {
   }
 
   const [phone, setPhone] = useState("");
+  function formatPhoneNumber(value) {
+    // if input value is falsy eg if the user deletes the input, then just return
+    if (!value) return value;
+
+    // clean the input for any non-digit values.
+    const phoneNumber = value.replace(/[^\d]/g, "");
+
+    // phoneNumberLength is used to know when to apply our formatting for the phone number
+    const phoneNumberLength = phoneNumber.length;
+
+    // we need to return the value with no formatting if its less then four digits
+    // this is to avoid weird behavior that occurs if you  format the area code to early
+    if (phoneNumberLength < 4) return phoneNumber;
+
+    // if phoneNumberLength is greater than 4 and less the 7 we start to return
+    // the formatted number
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    }
+
+    // finally, if the phoneNumberLength is greater then seven, we add the last
+    // bit of formatting and return it.
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
+      3,
+      6
+    )} ${phoneNumber.slice(6, 10)}`;
+  }
+
   function phoneChangeHandler(e) {
-    setPhone(e.target.value);
+    const formattedPhoneNumber = formatPhoneNumber(e.target.value);
+
+    setPhone(formattedPhoneNumber);
   }
   const [adress, setAdress] = useState("");
   function adressChangeHandler(e) {
@@ -108,6 +138,35 @@ function SignupForm(props) {
                       if (Password === passCheck) {
                         setShowError(false);
                         //!phone number
+                        if (phone === "" || null) {
+                          setShowError(true);
+                          setErrorPhone(true);
+                          setErrorType("danger");
+                          return setErrorMessage(() => {
+                            return (
+                              <div>
+                                <p>Phone number area cannot leave empty...</p>
+                              </div>
+                            );
+                          });
+                        } else {
+                          if (validator.isMobilePhone(phone) === true) {
+                            setShowError(false);
+                            console.log(phone);
+                          } else {
+                            console.log(phone);
+                            setShowError(true);
+                            setErrorPhone(true);
+                            setErrorType("danger");
+                            return setErrorMessage(() => {
+                              return (
+                                <div>
+                                  <p>Phone number is invalid...</p>
+                                </div>
+                              );
+                            });
+                          }
+                        }
                       } else {
                         setShowError(true);
                         setErrorInvalidPass(true);
@@ -204,6 +263,7 @@ function SignupForm(props) {
     }
 
     console.log(Name, Surname, Password, passCheck, Email, phone, adress);
+
     setName("");
     setSurname("");
     setEmail("");
@@ -335,17 +395,22 @@ function SignupForm(props) {
             </div>
           </div>
         </div>
-        {/* phone */}
+        {/* Phone1 */}
         <div className="form-floating mb-3">
           <input
-            type="number"
-            className="form-control"
+            type="text"
+            className={`form-control ${errorPhone ? "is-invalid" : null}`}
             placeholder="(xxx)"
             value={phone}
             onChange={phoneChangeHandler}
             id="phone"
           />
-          <label htmlFor="phone">Phone Number</label>
+          <label
+            htmlFor="phone"
+            className={`${errorPhone ? `is-invalid ${classes.false}` : null}`}
+          >
+            Phone Number
+          </label>
         </div>
         <div className="form-floating mb-3">
           <textarea
