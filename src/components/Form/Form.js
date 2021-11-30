@@ -89,6 +89,40 @@ function SignupForm(props) {
                 setShowError(false);
                 //!pass sorgu
                 if (Password === "" || null) {
+                  setShowError(true);
+                  setErrorPass(true);
+                  setErrorType("danger");
+                  return setErrorMessage("Password area cannot leave blank...");
+                } else {
+                  if (validator.isStrongPassword(Password) === true) {
+                    setShowError(false);
+                    //!passcheck
+                    if (passCheck === "" || null) {
+                      setShowError(true);
+                      setErrorInvalidPass(true);
+                      setErrorType("danger");
+                      return setErrorMessage(
+                        "Password check area cannot leave blank..."
+                      );
+                    } else {
+                      if (Password === passCheck) {
+                        setShowError(false);
+                        //!phone number
+                      } else {
+                        setShowError(true);
+                        setErrorInvalidPass(true);
+                        setErrorType("danger");
+                        return setErrorMessage("Passwords doesn't match...");
+                      }
+                    }
+                  } else {
+                    setShowError(true);
+                    setErrorPass(true);
+                    setErrorType("danger");
+                    return setErrorMessage(() => {
+                      return <div>Password is invalid.</div>;
+                    });
+                  }
                 }
               } else {
                 setShowError(true);
@@ -304,13 +338,12 @@ function SignupForm(props) {
         {/* phone */}
         <div className="form-floating mb-3">
           <input
-            type="text"
+            type="number"
             className="form-control"
-            placeholder="Phone number"
+            placeholder="(xxx)"
             value={phone}
             onChange={phoneChangeHandler}
             id="phone"
-            pattern="/(\+\d{1,3}\s?)?((\(\d{3}\)\s?)|(\d{3})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?/g"
           />
           <label htmlFor="phone">Phone Number</label>
         </div>
