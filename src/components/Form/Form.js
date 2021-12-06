@@ -16,6 +16,7 @@ function SignupForm(props) {
   const [errorAdress, setErrorAdress] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
   const [errorPass, setErrorPass] = useState(false);
+  const [infoPass, setInfoPass] = useState(false);
   const [errorInvalidPass, setErrorInvalidPass] = useState(false);
   const nameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/;
   const surnameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/;
@@ -86,6 +87,12 @@ function SignupForm(props) {
   function adressChangeHandler(e) {
     setAdress(e.target.value);
   }
+  function passwordFocusHandler(e) {
+    setInfoPass(true);
+  }
+  function passwordBlurHandler() {
+    setInfoPass(false);
+  }
 
   function onSubmitHandler(e) {
     e.preventDefault();
@@ -152,7 +159,21 @@ function SignupForm(props) {
                         } else {
                           if (validator.isMobilePhone(phone) === true) {
                             setShowError(false);
-                            console.log(phone);
+                            //!adress
+                            if (adress === "" || null) {
+                              setShowError(true);
+                              setErrorAdress(true);
+                              setErrorType("danger");
+                              return setErrorMessage(() => {
+                                return (
+                                  <div>
+                                    <p>Adress area cannot leave empty...</p>
+                                  </div>
+                                );
+                              });
+                            } else {
+                              localStorage.setItem("isLoggedIn", "true");
+                            }
                           } else {
                             console.log(phone);
                             setShowError(true);
@@ -162,6 +183,10 @@ function SignupForm(props) {
                               return (
                                 <div>
                                   <p>Phone number is invalid...</p>
+                                  <p>
+                                    Ex: Please enter like{" "}
+                                    <ins>(xxx)xxx xxxx</ins>
+                                  </p>
                                 </div>
                               );
                             });
@@ -179,7 +204,17 @@ function SignupForm(props) {
                     setErrorPass(true);
                     setErrorType("danger");
                     return setErrorMessage(() => {
-                      return <div>Password is invalid.</div>;
+                      return (
+                        <div>
+                          <p>Password is invalid. Please read the rules</p>
+                          <p>Minimum password length is 8.</p>
+                          <p>
+                            Your password needs a minimum 1 lower character and
+                            uppercase character.
+                          </p>
+                          <p></p>
+                        </div>
+                      );
                     });
                   }
                 }
@@ -252,10 +287,6 @@ function SignupForm(props) {
                 </span>
               </p>
               <p>* Numbers not allowed.</p>
-              <p>
-                * No leading or trailing spaces are allowed, empty string is NOT
-                allowed.
-              </p>
             </div>
           );
         });
@@ -272,6 +303,21 @@ function SignupForm(props) {
     setPhone("");
     setAdress("");
   }
+  const paswordInfoMessage = (
+    <div>
+      <p>* Please read the rules first.</p>
+      <p>* Minimum password length is 8.</p>
+      <p>
+        * Password needs a minimum 1 <ins>lower character</ins> and{" "}
+        <ins> uppercase character</ins>.
+      </p>
+      <p>
+        * Password must have a atleast 1 <ins>numbers</ins> and{" "}
+        <ins>speacial character.</ins>
+      </p>
+    </div>
+  );
+
   return (
     <form onSubmit={onSubmitHandler}>
       <div className="row mt-2">
@@ -360,6 +406,8 @@ function SignupForm(props) {
                 placeholder="Password"
                 value={Password}
                 onChange={passwordChangeHandler}
+                onFocus={passwordFocusHandler}
+                onBlur={passwordBlurHandler}
                 id="pass"
               />
               <label
@@ -444,6 +492,13 @@ function SignupForm(props) {
             {errorMessage}
           </Alert>
         </div>
+      }
+      {
+        <>
+          <div className={!infoPass ? "visually-hidden" : ""}>
+            <Alert variant={`info`}>{paswordInfoMessage}</Alert>
+          </div>
+        </>
       }
       <div className="d-grid">
         <button type="submit" className="btn btn-outline-light col-6 mx-auto">
