@@ -5,7 +5,8 @@ export default function GoogleButton(props) {
     <button
       className={`btn btn-social ${classes.btnGoogle} col-lg-4 col-md-3 mx-auto d-flex justify-content-center`}
     >
-      <span class="fa fa-google"></span> <strong>Continue with Google</strong>
+      <span className="fa fa-google"></span>{" "}
+      <strong>Continue with Google</strong>
     </button>
   );
 }

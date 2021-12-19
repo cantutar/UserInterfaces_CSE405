@@ -16,6 +16,7 @@ function SignupForm(props) {
   const [errorAdress, setErrorAdress] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
   const [errorPass, setErrorPass] = useState(false);
+  const [typePass, setTypePass] = useState(false);
   const [infoPass, setInfoPass] = useState(false);
   const [errorInvalidPass, setErrorInvalidPass] = useState(false);
   const nameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/;
@@ -23,10 +24,52 @@ function SignupForm(props) {
 
   const passRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,30}$/;
-
   const [Name, setName] = useState("");
+  // console.log(Name);
   function nameChangeHandler(e) {
     setName(e.target.value);
+    //! Name için sorgu
+    if (Name === " ") {
+      setShowError(true);
+      setErrorName(true);
+      setErrorType("danger");
+      return setErrorMessage("You cannot leave blank Name area...");
+    } else {
+      if (nameRegex.test(Name) === true) {
+        setShowError(false);
+        setErrorName(false);
+      } else {
+        setShowError(true);
+        setErrorName(true);
+        setErrorType("danger");
+        return setErrorMessage(() => {
+          return (
+            <div className="row text-danger">
+              <p>
+                * First character <mark>MUST</mark> be capital.
+                <span>
+                  Ex: <ins>sTeWaRT</ins> or like <ins>MEhMeT</ins> is not
+                  allowed.
+                </span>
+              </p>
+              <p>
+                * Supports English alphabets only.{" "}
+                <span>
+                  Ex: <ins>ş,ç,ğ</ins> is not allowed.
+                </span>
+              </p>
+              <p>* Numbers not allowed.</p>
+            </div>
+          );
+        });
+      }
+    }
+  }
+  function nameBlurHandler(e) {
+    if (Name === "") {
+      setErrorName(true);
+      return setShowError(true);
+    }
   }
 
   const [Surname, setSurname] = useState("");
@@ -42,6 +85,9 @@ function SignupForm(props) {
   const [Password, setPassword] = useState("");
   function passwordChangeHandler(e) {
     setPassword(e.target.value.trim());
+  }
+  function buttonToggleHandler() {
+    setTypePass((prevtypePass) => !prevtypePass);
   }
 
   const [passCheck, setPassCheck] = useState("");
@@ -97,140 +143,112 @@ function SignupForm(props) {
   function onSubmitHandler(e) {
     e.preventDefault();
 
-    //! Name için sorgu
-    if (Name === "" || null) {
+    //!Surname için sorgu
+    if (Surname === "" || null) {
       setShowError(true);
-      setErrorName(true);
+      setErrorSurname(true);
       setErrorType("danger");
-      return setErrorMessage("You cannot leave blank Name area...");
+      return setErrorMessage("You cannot leave blank Surname area...");
     } else {
-      if (nameRegex.test(Name) === true) {
+      if (surnameRegex.test(Surname) === true) {
         setShowError(false);
-        //!Surname için sorgu
-        if (Surname === "" || null) {
+        //!email sorgu
+        if (Email === "" || null) {
           setShowError(true);
-          setErrorSurname(true);
+          setErrorEmail(true);
           setErrorType("danger");
-          return setErrorMessage("You cannot leave blank Surname area...");
+          return setErrorMessage("You cannot leave blank Email area...");
         } else {
-          if (surnameRegex.test(Surname) === true) {
+          if (validator.isEmail(Email) === true) {
             setShowError(false);
-            //!email sorgu
-            if (Email === "" || null) {
+            //!pass sorgu
+            if (Password === "" || null) {
               setShowError(true);
-              setErrorEmail(true);
+              setErrorPass(true);
               setErrorType("danger");
-              return setErrorMessage("You cannot leave blank Email area...");
+              return setErrorMessage("Password area cannot leave blank...");
             } else {
-              if (validator.isEmail(Email) === true) {
+              if (validator.isStrongPassword(Password) === true) {
                 setShowError(false);
-                //!pass sorgu
-                if (Password === "" || null) {
+                //!passcheck
+                if (passCheck === "" || null) {
                   setShowError(true);
-                  setErrorPass(true);
+                  setErrorInvalidPass(true);
                   setErrorType("danger");
-                  return setErrorMessage("Password area cannot leave blank...");
+                  return setErrorMessage(
+                    "Password check area cannot leave blank..."
+                  );
                 } else {
-                  if (validator.isStrongPassword(Password) === true) {
+                  if (Password === passCheck) {
                     setShowError(false);
-                    //!passcheck
-                    if (passCheck === "" || null) {
+                    //!phone number
+                    if (phone === "" || null) {
                       setShowError(true);
-                      setErrorInvalidPass(true);
+                      setErrorPhone(true);
                       setErrorType("danger");
-                      return setErrorMessage(
-                        "Password check area cannot leave blank..."
-                      );
+                      return setErrorMessage(() => {
+                        return (
+                          <div>
+                            <p>Phone number area cannot leave empty...</p>
+                          </div>
+                        );
+                      });
                     } else {
-                      if (Password === passCheck) {
+                      if (validator.isMobilePhone(phone) === true) {
                         setShowError(false);
-                        //!phone number
-                        if (phone === "" || null) {
+                        //!adress
+                        if (adress === "" || null) {
                           setShowError(true);
-                          setErrorPhone(true);
+                          setErrorAdress(true);
                           setErrorType("danger");
                           return setErrorMessage(() => {
                             return (
                               <div>
-                                <p>Phone number area cannot leave empty...</p>
+                                <p>Adress area cannot leave empty...</p>
                               </div>
                             );
                           });
                         } else {
-                          if (validator.isMobilePhone(phone) === true) {
-                            setShowError(false);
-                            //!adress
-                            if (adress === "" || null) {
-                              setShowError(true);
-                              setErrorAdress(true);
-                              setErrorType("danger");
-                              return setErrorMessage(() => {
-                                return (
-                                  <div>
-                                    <p>Adress area cannot leave empty...</p>
-                                  </div>
-                                );
-                              });
-                            } else {
-                              localStorage.setItem("isLoggedIn", "true");
-                            }
-                          } else {
-                            console.log(phone);
-                            setShowError(true);
-                            setErrorPhone(true);
-                            setErrorType("danger");
-                            return setErrorMessage(() => {
-                              return (
-                                <div>
-                                  <p>Phone number is invalid...</p>
-                                  <p>
-                                    Ex: Please enter like{" "}
-                                    <ins>(xxx)xxx xxxx</ins>
-                                  </p>
-                                </div>
-                              );
-                            });
-                          }
+                          localStorage.setItem("isLoggedIn", "true");
                         }
                       } else {
+                        console.log(phone);
                         setShowError(true);
-                        setErrorInvalidPass(true);
+                        setErrorPhone(true);
                         setErrorType("danger");
-                        return setErrorMessage("Passwords doesn't match...");
+                        return setErrorMessage(() => {
+                          return (
+                            <div>
+                              <p>Phone number is invalid...</p>
+                              <p>
+                                Ex: Please enter like <ins>(xxx)xxx xxxx</ins>
+                              </p>
+                            </div>
+                          );
+                        });
                       }
                     }
                   } else {
                     setShowError(true);
-                    setErrorPass(true);
+                    setErrorInvalidPass(true);
                     setErrorType("danger");
-                    return setErrorMessage(() => {
-                      return (
-                        <div>
-                          <p>Password is invalid. Please read the rules</p>
-                          <p>Minimum password length is 8.</p>
-                          <p>
-                            Your password needs a minimum 1 lower character and
-                            uppercase character.
-                          </p>
-                          <p></p>
-                        </div>
-                      );
-                    });
+                    return setErrorMessage("Passwords doesn't match...");
                   }
                 }
               } else {
                 setShowError(true);
-                setErrorEmail(true);
+                setErrorPass(true);
                 setErrorType("danger");
                 return setErrorMessage(() => {
                   return (
                     <div>
+                      <p>Password is invalid. Please read the rules</p>
+                      <p>Minimum password length is 8.</p>
                       <p>
-                        Please enter a valid E-mail...{" "}
-                        <span>
-                          Ex: <ins>test@test.com</ins>
-                        </span>
+                        Your password needs a minimum 1 lower character and
+                        uppercase character.
                       </p>
+                      <p></p>
                     </div>
                   );
                 });
@@ -238,28 +256,16 @@ function SignupForm(props) {
             }
           } else {
             setShowError(true);
-            setErrorSurname(true);
+            setErrorEmail(true);
             setErrorType("danger");
             return setErrorMessage(() => {
               return (
-                <div className="row">
+                <div>
                   <p>
-                    * First character <mark>MUST</mark> be capital.
+                    Please enter a valid E-mail...{" "}
                     <span>
-                      Ex: <ins>sTatHam</ins> or like <ins>MEhMeT</ins> is not
-                      allowed.
+                      Ex: <ins>test@test.com</ins>
                     </span>
-                  </p>
-                  <p>
-                    * Supports English alphabets only.{" "}
-                    <span>
-                      Ex: <ins>ş,ç,ğ</ins> is not allowed.
-                    </span>
-                  </p>
-                  <p>* Numbers not allowed.</p>
-                  <p>
-                    * No leading or trailing spaces are allowed, empty string is
-                    NOT allowed.
                   </p>
                 </div>
               );
@@ -268,7 +274,7 @@ function SignupForm(props) {
         }
       } else {
         setShowError(true);
-        setErrorName(true);
+        setErrorSurname(true);
         setErrorType("danger");
         return setErrorMessage(() => {
           return (
@@ -276,7 +282,7 @@ function SignupForm(props) {
               <p>
                 * First character <mark>MUST</mark> be capital.
                 <span>
-                  Ex: <ins>sTeWaRT</ins> or like <ins>MEhMeT</ins> is not
+                  Ex: <ins>sTatHam</ins> or like <ins>MEhMeT</ins> is not
                   allowed.
                 </span>
               </p>
@@ -287,6 +293,10 @@ function SignupForm(props) {
                 </span>
               </p>
               <p>* Numbers not allowed.</p>
+              <p>
+                * No leading or trailing spaces are allowed, empty string is NOT
+                allowed.
+              </p>
             </div>
           );
         });
@@ -345,6 +355,7 @@ function SignupForm(props) {
                 placeholder="User's Name"
                 value={Name}
                 onChange={nameChangeHandler}
+                onBlur={nameBlurHandler}
                 id="name"
               />
               <label
@@ -356,6 +367,9 @@ function SignupForm(props) {
                 Name
               </label>
             </div>
+            {errorName && (
+              <div className={`text-${errorType}`}>{errorMessage}</div>
+            )}
           </div>
           <div className="col-md">
             {/* Surname */}
@@ -397,49 +411,60 @@ function SignupForm(props) {
           </label>
         </div>
         {/* pass */}
-        <div className="row g-2">
-          <div className="col-md">
-            <div className="form-floating mb-3">
-              <input
-                type="password"
-                className={`form-control ${errorPass ? "is-invalid" : null}`}
-                placeholder="Password"
-                value={Password}
-                onChange={passwordChangeHandler}
-                onFocus={passwordFocusHandler}
-                onBlur={passwordBlurHandler}
-                id="pass"
-              />
-              <label
-                htmlFor="pass"
-                className={`${
-                  errorPass ? `is-invalid ${classes.false}` : null
-                }`}
+        <div className="row mb-3">
+          <div className="">
+            <div className="input-group">
+              <div className="form-floating col-lg-6 col-sm-5">
+                <input
+                  type={typePass ? "text" : "password"}
+                  className={`form-control ${errorPass ? "is-invalid" : null}`}
+                  placeholder="Password"
+                  value={Password}
+                  onChange={passwordChangeHandler}
+                  onFocus={passwordFocusHandler}
+                  onBlur={passwordBlurHandler}
+                  id="pass"
+                />
+
+                <label
+                  htmlFor="pass"
+                  className={`${
+                    errorPass ? `is-invalid ${classes.false}` : null
+                  }`}
+                >
+                  Password
+                </label>
+              </div>
+              <div className="form-floating col-lg-5 col-sm-5">
+                <input
+                  type={typePass ? "text" : "password"}
+                  className={`form-control ${
+                    errorInvalidPass ? "is-invalid" : null
+                  }`}
+                  placeholder="Password"
+                  value={passCheck}
+                  onChange={passwordCheckChangeHandler}
+                  id="passCheck"
+                />
+                <label
+                  htmlFor="passCheck"
+                  className={`${
+                    errorInvalidPass ? `is-invalid ${classes.false}` : null
+                  }`}
+                >
+                  Password Again
+                </label>
+              </div>
+              <button
+                className={
+                  typePass
+                    ? "btn btn-primary col-lg-1 col-sm-2"
+                    : "btn btn-dark col-lg-1 col-sm-2"
+                }
+                onClick={buttonToggleHandler}
               >
-                Password
-              </label>
-            </div>
-          </div>
-          <div className="col-md">
-            <div className="form-floating mb-3">
-              <input
-                type="password"
-                className={`form-control ${
-                  errorInvalidPass ? "is-invalid" : null
-                }`}
-                placeholder="Password"
-                value={passCheck}
-                onChange={passwordCheckChangeHandler}
-                id="passCheck"
-              />
-              <label
-                htmlFor="passCheck"
-                className={`${
-                  errorInvalidPass ? `is-invalid ${classes.false}` : null
-                }`}
-              >
-                Password Again
-              </label>
+                <span className="fa fa-fw fa-eye" />
+              </button>
             </div>
           </div>
         </div>
@@ -473,33 +498,6 @@ function SignupForm(props) {
           <label htmlFor="adress">Adress</label>
         </div>
       </div>
-      {
-        <div className={!ShowError ? "visually-hidden" : ""}>
-          <Alert
-            onClose={() => {
-              setShowError(false);
-              setErrorName(false);
-              setErrorSurname(false);
-              setErrorEmail(false);
-              setErrorPass(false);
-              setErrorInvalidPass(false);
-              setErrorPhone(false);
-              setErrorAdress(false);
-            }}
-            dismissible
-            variant={`${errorType}`}
-          >
-            {errorMessage}
-          </Alert>
-        </div>
-      }
-      {
-        <>
-          <div className={!infoPass ? "visually-hidden" : ""}>
-            <Alert variant={`info`}>{paswordInfoMessage}</Alert>
-          </div>
-        </>
-      }
       <div className="d-grid">
         <button type="submit" className="btn btn-outline-light col-6 mx-auto">
           Sign up
