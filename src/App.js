@@ -1,21 +1,15 @@
-import { useState } from "react";
 import Navbar from "./components/UI/Navbar/Navbar";
 import FormPage from "./pages/FormPage";
+import DarkModeContextProvider from "./store/darkmod-context";
 
 function App() {
-  const [isDarkValid, setIsDarkValid] = useState(false);
-
-  function darkModeHandler() {
-    setIsDarkValid(true);
-  }
-
   return (
-    <div>
-      <Navbar onValid={isDarkValid} onSetIsDarkValid={darkModeHandler} />
-      <div className="container">
-        <FormPage onValid={isDarkValid} />
+    <DarkModeContextProvider>
+      <Navbar />
+      <div className="container my-3 d-flex justify-content-center align-items-center">
+        <FormPage />
       </div>
-    </div>
+    </DarkModeContextProvider>
   );
 }
 

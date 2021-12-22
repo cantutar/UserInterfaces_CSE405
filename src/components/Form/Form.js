@@ -330,7 +330,7 @@ function SignupForm(props) {
 
   return (
     <form onSubmit={onSubmitHandler}>
-      <div className="row mt-2">
+      <div className="row">
         <GoogleButton />
       </div>
       <div className="row mt-3">
@@ -349,9 +349,8 @@ function SignupForm(props) {
             <div className="form-floating mb-3">
               <input
                 type="text"
-                className={`form-control ${
-                  errorName ? `is-invalid ${classes.false}` : null
-                }`}
+                className={`form-control ${errorName ? `is-invalid ${classes.false}` : null
+                  }`}
                 placeholder="User's Name"
                 value={Name}
                 onChange={nameChangeHandler}
@@ -360,9 +359,8 @@ function SignupForm(props) {
               />
               <label
                 htmlFor="name"
-                className={`${
-                  errorName ? `is-invalid ${classes.false}` : null
-                }`}
+                className={`${errorName ? `is-invalid ${classes.false}` : null
+                  }`}
               >
                 Name
               </label>
@@ -384,9 +382,8 @@ function SignupForm(props) {
               />
               <label
                 htmlFor="surname"
-                className={`${
-                  errorSurname ? `is-invalid ${classes.false}` : null
-                }`}
+                className={`${errorSurname ? `is-invalid ${classes.false}` : null
+                  }`}
               >
                 Surname
               </label>
@@ -428,9 +425,8 @@ function SignupForm(props) {
 
                 <label
                   htmlFor="pass"
-                  className={`${
-                    errorPass ? `is-invalid ${classes.false}` : null
-                  }`}
+                  className={`${errorPass ? `is-invalid ${classes.false}` : null
+                    }`}
                 >
                   Password
                 </label>
@@ -438,9 +434,8 @@ function SignupForm(props) {
               <div className="form-floating col-lg-5 col-sm-5">
                 <input
                   type={typePass ? "text" : "password"}
-                  className={`form-control ${
-                    errorInvalidPass ? "is-invalid" : null
-                  }`}
+                  className={`form-control ${errorInvalidPass ? "is-invalid" : null
+                    }`}
                   placeholder="Password"
                   value={passCheck}
                   onChange={passwordCheckChangeHandler}
@@ -448,9 +443,8 @@ function SignupForm(props) {
                 />
                 <label
                   htmlFor="passCheck"
-                  className={`${
-                    errorInvalidPass ? `is-invalid ${classes.false}` : null
-                  }`}
+                  className={`${errorInvalidPass ? `is-invalid ${classes.false}` : null
+                    }`}
                 >
                   Password Again
                 </label>

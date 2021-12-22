@@ -3,7 +3,7 @@ import classes from "./FormPage.module.css";
 
 function FormPage(props) {
   return (
-    <div className="col-lg-8 col-sm-12 mx-auto mt-4">
+    <div className="col-lg-8 col-sm-12 mx-auto">
       <div className="card" style={{ borderRadius: "18px" }}>
         <div className={`card-body ${classes.dark}`}>
           <Form />
