@@ -1,6 +1,6 @@
 import DarkmodeToggle from "../Buttons/DarkmodeToggle";
 import { useEffect, useState } from "react";
-import { useTheme, useToggleDark } from "../../../store/darkmod-context";
+import { useTheme, useToggleDark } from "../../../store/darkmode-context";
 
 function Navbar(props) {
   const theme = useTheme();

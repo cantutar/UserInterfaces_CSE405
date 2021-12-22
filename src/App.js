@@ -1,6 +1,6 @@
 import Navbar from "./components/UI/Navbar/Navbar";
 import FormPage from "./pages/FormPage";
-import DarkModeContextProvider from "./store/darkmod-context";
+import DarkModeContextProvider from "./store/darkmode-context";
 
 function App() {
   return (
