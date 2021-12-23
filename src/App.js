@@ -1,14 +1,12 @@
+import FormPage from "./components/FormPage/FormPage";
 import Navbar from "./components/UI/Navbar/Navbar";
-import FormPage from "./pages/FormPage";
 import DarkModeContextProvider from "./store/darkmode-context";
 
 function App() {
   return (
     <DarkModeContextProvider>
       <Navbar />
-      <div className="container my-3 d-flex justify-content-center align-items-center">
-        <FormPage />
-      </div>
+      <FormPage />
     </DarkModeContextProvider>
   );
 }

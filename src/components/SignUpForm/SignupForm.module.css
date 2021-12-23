@@ -1,0 +1,49 @@
+.false {
+  color: red !important;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* input {
+  background-color: #7c7c7c !important;
+  color: white !important;
+}
+textarea {
+  background-color: #7c7c7c !important;
+  color: white !important;
+}
+label {
+  color: white !important;
+} */
+
+.formButton {
+  color: white;
+  background-color: #211a6e;
+}
+
+.formButton:hover {
+  color: #211a6e;
+  border-color: #211a6e;
+  background-color: white;
+}
+.formButtonMavi {
+  color: white;
+  background-color: #211a6e;
+}
+.formButtonMavi:hover {
+  color: white;
+  background-color: #2216a8;
+}
+.formButtonRed {
+  color: white;
+  background-color: #ff171a;
+}
+.formYazi {
+  color: #ff171a;
+}
+.formButtonRed:hover {
+  color: white;
+  background-color: #d11013;
+}

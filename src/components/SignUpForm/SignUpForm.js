@@ -1,10 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import { Alert } from "react-bootstrap";
-import FacebookButton from "../UI/Buttons/FacebookButton";
-import GoogleButton from "../UI/Buttons/GoogleButton";
 import classes from "./SignupForm.module.css";
 import validator from "validator";
+import Socials from "../UI/Buttons/Socials";
 
 function SignupForm(props) {
   const [errorType, setErrorType] = useState("");
@@ -329,175 +327,194 @@ function SignupForm(props) {
   );
 
   return (
-    <form onSubmit={onSubmitHandler}>
-      <div className="row">
-        <GoogleButton />
-      </div>
-      <div className="row mt-3">
-        <FacebookButton />
-      </div>
-      <div className="row mt-5 mb-2">
-        <h4 className="text-center text-white">
-          Or... <br /> <br /> Sign up with Email.
-        </h4>
-      </div>
-      <hr />
-      <div className="form">
-        {/* Name */}
-        <div className="row g-2">
-          <div className="col-md">
-            <div className="form-floating mb-3">
-              <input
-                type="text"
-                className={`form-control ${errorName ? `is-invalid ${classes.false}` : null
-                  }`}
-                placeholder="User's Name"
-                value={Name}
-                onChange={nameChangeHandler}
-                onBlur={nameBlurHandler}
-                id="name"
-              />
-              <label
-                htmlFor="name"
-                className={`${errorName ? `is-invalid ${classes.false}` : null
-                  }`}
-              >
-                Name
-              </label>
-            </div>
-            {errorName && (
-              <div className={`text-${errorType}`}>{errorMessage}</div>
-            )}
-          </div>
-          <div className="col-md">
-            {/* Surname */}
-            <div className="form-floating mb-3">
-              <input
-                type="text"
-                className={`form-control ${errorSurname ? `is-invalid` : null}`}
-                placeholder="User's Surname"
-                value={Surname}
-                onChange={surnameChangeHandler}
-                id="surname"
-              />
-              <label
-                htmlFor="surname"
-                className={`${errorSurname ? `is-invalid ${classes.false}` : null
-                  }`}
-              >
-                Surname
-              </label>
-            </div>
-          </div>
+    <>
+      <form onSubmit={onSubmitHandler}>
+        <div className="row text-center mt-3">
+          <h2 className={`fs-1 ${classes.formYazi}`}>Create Account</h2>
         </div>
-        {/* email */}
-        <div className="form-floating mb-3">
-          <input
-            type="email"
-            className={`form-control ${errorEmail ? `is-invalid` : null}`}
-            placeholder="E-mail"
-            value={Email}
-            onChange={emailChangeHandler}
-            id="mail"
-          />
-          <label
-            htmlFor="mail"
-            className={`${errorEmail ? `${classes.false}` : null}`}
-          >
-            E-mail
-          </label>
-        </div>
-        {/* pass */}
-        <div className="row mb-3">
-          <div className="">
-            <div className="input-group">
-              <div className="form-floating col-lg-6 col-sm-5">
-                <input
-                  type={typePass ? "text" : "password"}
-                  className={`form-control ${errorPass ? "is-invalid" : null}`}
-                  placeholder="Password"
-                  value={Password}
-                  onChange={passwordChangeHandler}
-                  onFocus={passwordFocusHandler}
-                  onBlur={passwordBlurHandler}
-                  id="pass"
-                />
 
-                <label
-                  htmlFor="pass"
-                  className={`${errorPass ? `is-invalid ${classes.false}` : null
-                    }`}
-                >
-                  Password
-                </label>
-              </div>
-              <div className="form-floating col-lg-5 col-sm-5">
+        <div className="row mt-3">
+          <Socials />
+        </div>
+        <div className="row mt-2 mb-1">
+          <p className="text-center">...or sign up with e-mail:</p>
+        </div>
+        <div className="form">
+          {/* Name */}
+          <div className="row g-2">
+            <div className="col-md">
+              <div className="form-floating mb-3">
                 <input
-                  type={typePass ? "text" : "password"}
-                  className={`form-control ${errorInvalidPass ? "is-invalid" : null
-                    }`}
-                  placeholder="Password"
-                  value={passCheck}
-                  onChange={passwordCheckChangeHandler}
-                  id="passCheck"
+                  type="text"
+                  className={`form-control ${
+                    errorName ? `is-invalid ${classes.false}` : null
+                  }`}
+                  placeholder="User's Name"
+                  value={Name}
+                  onChange={nameChangeHandler}
+                  onBlur={nameBlurHandler}
+                  id="name"
                 />
                 <label
-                  htmlFor="passCheck"
-                  className={`${errorInvalidPass ? `is-invalid ${classes.false}` : null
-                    }`}
+                  htmlFor="name"
+                  className={`${
+                    errorName ? `is-invalid ${classes.false}` : null
+                  }`}
                 >
-                  Password Again
+                  Name
                 </label>
               </div>
-              <button
-                className={
-                  typePass
-                    ? "btn btn-primary col-lg-1 col-sm-2"
-                    : "btn btn-dark col-lg-1 col-sm-2"
-                }
-                onClick={buttonToggleHandler}
-              >
-                <span className="fa fa-fw fa-eye" />
-              </button>
+              {errorName && (
+                <div className={`text-${errorType}`}>{errorMessage}</div>
+              )}
+            </div>
+            <div className="col-md">
+              {/* Surname */}
+              <div className="form-floating mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    errorSurname ? `is-invalid` : null
+                  }`}
+                  placeholder="User's Surname"
+                  value={Surname}
+                  onChange={surnameChangeHandler}
+                  id="surname"
+                />
+                <label
+                  htmlFor="surname"
+                  className={`${
+                    errorSurname ? `is-invalid ${classes.false}` : null
+                  }`}
+                >
+                  Surname
+                </label>
+              </div>
             </div>
           </div>
+          {/* email */}
+          <div className="form-floating mb-3">
+            <input
+              type="email"
+              className={`form-control ${errorEmail ? `is-invalid` : null}`}
+              placeholder="E-mail"
+              value={Email}
+              onChange={emailChangeHandler}
+              id="mail"
+            />
+            <label
+              htmlFor="mail"
+              className={`${errorEmail ? `${classes.false}` : null}`}
+            >
+              E-mail
+            </label>
+          </div>
+          {/* pass */}
+          <div className="row mb-3">
+            <div className="">
+              <div className="input-group">
+                <div className="form-floating col-lg-6 col-sm-5">
+                  <input
+                    type={typePass ? "text" : "password"}
+                    className={`form-control ${
+                      errorPass ? "is-invalid" : null
+                    }`}
+                    placeholder="Password"
+                    value={Password}
+                    onChange={passwordChangeHandler}
+                    onFocus={passwordFocusHandler}
+                    onBlur={passwordBlurHandler}
+                    id="pass"
+                  />
+
+                  <label
+                    htmlFor="pass"
+                    className={`${
+                      errorPass ? `is-invalid ${classes.false}` : null
+                    }`}
+                  >
+                    Password
+                  </label>
+                </div>
+                <div className="form-floating col-lg-5 col-sm-5">
+                  <input
+                    type={typePass ? "text" : "password"}
+                    className={`form-control ${
+                      errorInvalidPass ? "is-invalid" : null
+                    }`}
+                    placeholder="Password"
+                    value={passCheck}
+                    onChange={passwordCheckChangeHandler}
+                    id="passCheck"
+                  />
+                  <label
+                    htmlFor="passCheck"
+                    className={`${
+                      errorInvalidPass ? `is-invalid ${classes.false}` : null
+                    }`}
+                  >
+                    Password Again
+                  </label>
+                </div>
+                <button
+                  className={
+                    typePass
+                      ? `btn ${classes.formButtonRed} col-lg-1 col-sm-2`
+                      : `btn ${classes.formButtonMavi} col-lg-1 col-sm-2`
+                  }
+                  onClick={buttonToggleHandler}
+                >
+                  <span className="fa fa-fw fa-eye" />
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* Phone1 */}
+          <div className="form-floating mb-3">
+            <input
+              type="text"
+              className={`form-control ${errorPhone ? "is-invalid" : null}`}
+              placeholder="(xxx)"
+              value={phone}
+              onChange={phoneChangeHandler}
+              id="phone"
+            />
+            <label
+              htmlFor="phone"
+              className={`${errorPhone ? `is-invalid ${classes.false}` : null}`}
+            >
+              Phone Number
+            </label>
+          </div>
+          <div className="form-floating mb-3">
+            <textarea
+              style={{ height: "150px" }}
+              type="textarea"
+              className="form-control"
+              placeholder="Please enter Your Adress..."
+              value={adress}
+              onChange={adressChangeHandler}
+              id="adress"
+            />
+            <label htmlFor="adress">Adress</label>
+          </div>
         </div>
-        {/* Phone1 */}
-        <div className="form-floating mb-3">
-          <input
-            type="text"
-            className={`form-control ${errorPhone ? "is-invalid" : null}`}
-            placeholder="(xxx)"
-            value={phone}
-            onChange={phoneChangeHandler}
-            id="phone"
-          />
-          <label
-            htmlFor="phone"
-            className={`${errorPhone ? `is-invalid ${classes.false}` : null}`}
+        <div className="d-grid">
+          <button
+            type="submit"
+            className={`btn col-6 mx-auto ${classes.formButton}`}
           >
-            Phone Number
-          </label>
+            Sign up
+          </button>
         </div>
-        <div className="form-floating mb-3">
-          <textarea
-            style={{ height: "150px" }}
-            type="textarea"
-            className="form-control"
-            placeholder="Please enter Your Adress..."
-            value={adress}
-            onChange={adressChangeHandler}
-            id="adress"
-          />
-          <label htmlFor="adress">Adress</label>
-        </div>
-      </div>
-      <div className="d-grid">
-        <button type="submit" className="btn btn-outline-light col-6 mx-auto">
-          Sign up
-        </button>
-      </div>
-    </form>
+      </form>
+      <p className="mt-4 text-center">
+        By clicking Sign up button you will agree with{" "}
+        <a href="http://" target="_blank" rel="noopener noreferrer">
+          user agreement bla bla.
+        </a>
+      </p>
+    </>
   );
 }
 

@@ -1,0 +1,17 @@
+.btnSocial {
+  margin: 0;
+  padding: 10px;
+  display: flex;
+  justify-self: center;
+  align-self: center;
+  border: 1px;
+  color: black;
+  border-color: black;
+  border-style: outset;
+}
+/* use for default value */
+
+/* .btnSocial:hover {
+  background-color: black;
+  color: #eee;
+} */

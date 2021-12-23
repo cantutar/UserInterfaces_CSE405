@@ -8,7 +8,7 @@ function Navbar(props) {
   const [mode, setMode] = useState("dark");
   const [icon, setIcon] = useState("🌙");
   useEffect(() => {
-    if (theme === false) {
+    if (theme === true) {
       setMode("light");
       setIcon("☀️");
       document.body.style.background = "#121212";
@@ -20,10 +20,15 @@ function Navbar(props) {
   }, [theme]);
 
   return (
-    <nav className={`navbar bg-${theme ? "light" : "dark"}`}>
+    <nav className={`navbar bg-${!theme ? "light" : "dark"}`}>
       <div className="container-fluid">
         <div className="row">
-          <DarkmodeToggle icon={icon} mode={mode} clickEvent={TMode} />
+          <div className="col-md-3">
+            <h2>Can T.</h2>
+          </div>
+          <div className="col-md-3 ml-auto">
+            <DarkmodeToggle icon={icon} mode={mode} clickEvent={TMode} />
+          </div>
         </div>
       </div>
     </nav>

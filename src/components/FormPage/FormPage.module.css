@@ -1,0 +1,29 @@
+.dark {
+  /* background-color: #353535; */
+  background-color: #eee;
+  border-radius: 18px;
+}
+.light {
+  background-color: white;
+}
+
+.imgForm {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  height: 100% !important;
+  background-repeat: no-repeat !important;
+  object-fit: cover !important;
+}
+.cardBox {
+  border-radius: 50px;
+  background: #eeeded;
+  box-shadow: 20px 20px 60px #b5b4b4, -20px -20px 60px #ffffff;
+}
+.cardBoxCam {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
