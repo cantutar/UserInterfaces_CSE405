@@ -3,17 +3,15 @@ import styled from "styled-components";
 
 const Butn = styled.button.attrs((props) => ({
   className: props.classname,
-  color: String,
 }))`
   margin: 0;
-  padding: 10px;
   display: flex;
   justify-content: center;
   align-self: center;
   border: 1px;
   color: black;
   border-color: black;
-  border-style: outset;
+  border-style: solid;
 
   &:hover {
     color: ${(props) => props.btColor};
@@ -27,7 +25,7 @@ function SocialButton(props) {
     <Butn
       btColor={props.btColor}
       bgColor={props.bgColor}
-      className={"btn rounded-circle col-lg-1 col-md-1 mx-auto"}
+      className={"btn col-lg-1 col-md-1 col-sm-1 mx-auto"}
     >
       <span className={`fa fa-2x fa-${props.name}`}></span>
     </Butn>

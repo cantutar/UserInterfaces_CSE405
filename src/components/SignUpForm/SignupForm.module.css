@@ -1,22 +1,26 @@
 .false {
   color: red !important;
+  animation: shake 0.2s ease-in-out 0s 2;
+}
+@keyframes shake {
+  0% {
+    margin-left: 0rem;
+  }
+  25% {
+    margin-left: 0.5rem;
+  }
+  75% {
+    margin-left: -0.5rem;
+  }
+  100% {
+    margin-left: 0rem;
+  }
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-/* input {
-  background-color: #7c7c7c !important;
-  color: white !important;
-}
-textarea {
-  background-color: #7c7c7c !important;
-  color: white !important;
-}
-label {
-  color: white !important;
-} */
 
 .formButton {
   color: white;

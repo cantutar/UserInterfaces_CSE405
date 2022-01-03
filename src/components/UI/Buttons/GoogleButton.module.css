@@ -1,0 +1,7 @@
+.btnGoogle {
+  background-color: white !important;
+  margin: 0;
+}
+.btnGoogle:hover {
+  background-color: rgb(236, 230, 230) !important;
+}

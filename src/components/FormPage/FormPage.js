@@ -10,7 +10,7 @@ function FormPage(props) {
           <div className="col">
             <div className={`card my-4 ${classNames.cardBoxCam}`}>
               <div className="row g-0">
-                <div className="col-xl-6 px-2">
+                <div className="col-xl-6 px-4">
                   <SignupForm />
                 </div>
                 <div className="col-xl-6 d-none d-xl-block">

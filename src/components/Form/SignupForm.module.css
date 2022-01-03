@@ -1,0 +1,19 @@
+.false {
+  color: red !important;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* input {
+  background-color: #7c7c7c !important;
+  color: white !important;
+}
+textarea {
+  background-color: #7c7c7c !important;
+  color: white !important;
+}
+label {
+  color: white !important;
+} */
