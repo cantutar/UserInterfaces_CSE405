@@ -6,7 +6,7 @@ import GoogleButton from "../UI/Buttons/GoogleButton";
 import classes from "./SignupForm.module.css";
 import validator from "validator";
 
-function SignupForm(props) {
+function SignupFormeski(props) {
   const [errorType, setErrorType] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [ShowError, setShowError] = useState(false);
@@ -509,4 +509,4 @@ function SignupForm(props) {
   );
 }
 
-export default SignupForm;
+export default SignupFormeski;

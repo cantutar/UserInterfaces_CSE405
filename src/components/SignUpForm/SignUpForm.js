@@ -1,18 +1,25 @@
-import { useReducer, useState } from "react";
+import { useReducer } from "react";
 import classes from "./SignupForm.module.css";
 import validator from "validator";
 import Socials from "../UI/Buttons/Socials";
 import BlankInputError from "../Error/BlankInputError";
 import NameError from "../Error/NameError";
-// import SurnameError from "../Error/SurnameError";
+import SurnameError from "../Error/SurnameError";
 import { useDebounce } from "../../hooks/debounce";
 import { SignupReducer, ACTIONS } from "./SignupFormReducer";
+import FormInput from "../FormInput/FormInput";
+import FormInputPhone from "../FormInput/FormInputPhone";
 // import PassError from "../Error/PassError";
 // import MailError from "../Error/MailError";
 
 const initialState = {
+  Name: "",
+  Surname: "",
+  Email: "",
+  Password: "",
+  Phone: "",
+  Adress: "",
   errorType: "",
-  ShowError: false,
   errorName: false,
   errorSurname: false,
   errorPhone: false,
@@ -20,7 +27,10 @@ const initialState = {
   errorEmail: false,
   errorPass: false,
   typePass: false,
-  passEq: false,
+  passAgain: "",
+  passEqual: false,
+  //!! TODO Change the value of form valid to false
+  isFormValid: true,
   nameRegex: /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/,
   surnameRegex: /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/,
 };
@@ -28,34 +38,42 @@ const initialState = {
 function SignupForm(props) {
   const [state, dispatch] = useReducer(SignupReducer, initialState);
   const {
+    Name,
+    Email,
+    Surname,
+    Password,
+    passAgain,
+    Phone,
+    Adress,
     errorType,
-    ShowError,
     errorName,
     errorSurname,
     errorPhone,
     errorAdress,
     errorEmail,
     errorPass,
-    infoPass,
     errorInvalidPass,
-    passEq,
-    Name,
-    Email,
-    Surname,
-    Password,
-    passCheck,
-    adress,
+    passEqual,
+    isFormValid,
+    typePass,
+    nameRegex,
+    surnameRegex,
   } = state;
 
-  function NameChangeHandler(e) {
-    dispatch({ type: ACTIONS.FIELD, FIELD: "Name", value: e.target.value });
+  function nameChangeHandler(e) {
+    dispatch({
+      type: ACTIONS.FIELD,
+      FIELD: e.target.name,
+      value: e.target.value,
+    });
+    console.log(!Name);
   }
   function nameCheck() {
     //! Name için sorgu
-    if (Name === "") {
+    if (!Name) {
       return dispatch({ type: ACTIONS.NAME_SUCCESS });
     } else {
-      if (initialState.nameRegex.test(Name) === true) {
+      if (nameRegex.test(Name) === true) {
         return dispatch({ type: ACTIONS.NAME_SUCCESS });
       } else {
         return dispatch({ type: ACTIONS.NAME_ERROR });
@@ -64,29 +82,20 @@ function SignupForm(props) {
   }
 
   useDebounce(nameCheck, 500);
-  // function nameBlurHandler(e) {
-  //   if (Name === "") {
-  //     setErrorName(true);
-  //     setShowError(true);
-  //     return setErrorMessage(() => {
-  //       return <BlankInputError inputName={"Name"} />;
-  //     });
-  //   }
-  // }
 
   function surnameChangeHandler(e) {
     dispatch({
       type: ACTIONS.FIELD,
-      FIELDNAME: "Surname",
+      FIELD: "Surname",
       value: e.target.value.trim(),
     });
   }
   //!Surname için sorgu
   function surnameCheck() {
-    if (Surname === "" || null) {
+    if (!Surname) {
       return dispatch({ type: ACTIONS.SURNAME_SUCCESS });
     } else {
-      if (initialState.surnameRegex.test(Surname) === true) {
+      if (surnameRegex.test(Surname)) {
         return dispatch({ type: ACTIONS.SURNAME_SUCCESS });
       } else {
         return dispatch({ type: ACTIONS.SURNAME_ERROR });
@@ -125,27 +134,29 @@ function SignupForm(props) {
   }
   useDebounce(passwordCheck, 500);
 
-  const [typePass, setTypePass] = useState(false);
   function buttonToggleHandler() {
-    setTypePass((prevtypePass) => !prevtypePass);
+    dispatch({
+      type: ACTIONS.FORM_INPUT_TYPE,
+      payload: (prevtypePass) => !prevtypePass,
+    });
   }
 
   function passwordCheckChangeHandler(e) {
     dispatch({
       type: ACTIONS.FIELD,
-      FIELD: "passCheck",
+      FIELD: "passAgain",
       value: e.target.value.trim(),
     });
   }
   //!passcheck
   function passEqualCheck() {
-    if (passCheck === "" || null) {
+    if (!passAgain) {
       return dispatch({ type: ACTIONS.PASSWORDEQ_SUCCESS });
 
       // setErrorType("danger");
       // return setErrorMessage("Password check area cannot leave blank...");
     } else {
-      if (Password === passCheck) {
+      if (Password === passAgain) {
         return dispatch({ type: ACTIONS.PASSWORDEQ_SUCCESS });
       } else {
         return dispatch({ type: ACTIONS.PASSWORDEQ_ERROR });
@@ -153,61 +164,38 @@ function SignupForm(props) {
     }
   }
   useDebounce(passEqualCheck, 500);
-  const [phone, setPhone] = useState("");
-  function formatPhoneNumber(value) {
-    // if input value is falsy eg if the user deletes the input, then just return
-    if (!value) return value;
-
-    // clean the input for any non-digit values.
-    const phoneNumber = value.replace(/[^\d]/g, "");
-
-    // phoneNumberLength is used to know when to apply our formatting for the phone number
-    const phoneNumberLength = phoneNumber.length;
-
-    // we need to return the value with no formatting if its less then four digits
-    // this is to avoid weird behavior that occurs if you  format the area code to early
-    if (phoneNumberLength < 4) return phoneNumber;
-
-    // if phoneNumberLength is greater than 4 and less the 7 we start to return
-    // the formatted number
-    if (phoneNumberLength < 7) {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-    }
-
-    // finally, if the phoneNumberLength is greater then seven, we add the last
-    // bit of formatting and return it.
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(
-      3,
-      6
-    )} ${phoneNumber.slice(6, 10)}`;
-  }
 
   function phoneChangeHandler(e) {
-    const formattedPhoneNumber = formatPhoneNumber(e.target.value);
-
-    setPhone(formattedPhoneNumber);
+    const PhoneInput = e.target.value;
+    dispatch({
+      type: ACTIONS.PHONE_INPUT,
+      FIELD: "Phone",
+      value: PhoneInput,
+    });
   }
+
   function phoneCheck() {
     //!phone number
-    if (phone === "" || null) {
+    if (Phone === "" || null) {
       return dispatch({ type: ACTIONS.PHONE_SUCCESS });
     } else {
-      if (validator.isMobilePhone(phone) === true) {
+      if (validator.isMobilePhone(Phone) === true) {
         return dispatch({ type: ACTIONS.PHONE_SUCCESS });
       } else {
         dispatch({ type: ACTIONS.PHONE_SUCCESS });
       }
     }
   }
+  useDebounce(phoneCheck, 500);
 
   function adressChangeHandler(e) {
     dispatch({
       type: ACTIONS.FIELD,
-      FIELDNAME: "adress",
+      FIELD: "Adress",
       value: e.target.value,
     });
   }
-  //TODO
+  //TODO fix the on submit
 
   function onSubmitHandler(e) {
     e.preventDefault();
@@ -220,13 +208,13 @@ function SignupForm(props) {
       return dispatch({ type: ACTIONS.SURNAME_ERROR });
     }
 
-    if (phone === "" || null) {
+    if (Phone === "" || null) {
       return dispatch({ type: ACTIONS.PHONE_ERROR });
     }
     //! adress
-    if (adress === "" || null) {
+    if (Adress === "" || null) {
       return dispatch({ type: ACTIONS.ADRESS_ERROR });
-
+      //TODO puan sistemi ekle her bir input için 1 puan ver ve değer doğruysa arttır sonuç doğruysa signupı trueya döndür
       // return setErrorMessage(() => {
       //   return (
       //     <div>
@@ -251,8 +239,8 @@ function SignupForm(props) {
         // });
       }
     }
-
-    console.log(Name, Surname, Password, passCheck, Email, phone, adress);
+    //TODO add a disable button check
+    console.log(Name, Surname, Password, passAgain, Email, Phone, Adress);
 
     // setName("");
     // setSurname("");
@@ -279,106 +267,66 @@ function SignupForm(props) {
         </div>
         <div className="form">
           {/* Name */}
-          <div className="row">
+          <div className="row mb-3">
             <div className="col-md">
-              <div className="form-floating mb-3">
-                <input
-                  type="text"
-                  className={`form-control ${
-                    errorName ? `is-invalid ${classes.false}` : null
-                  }`}
-                  placeholder="User's Name"
-                  value={Name}
-                  onChange={NameChangeHandler}
-                  // onBlur={nameBlurHandler}
-                  id="name"
-                />
-                <label
-                  htmlFor="name"
-                  className={`${
-                    errorName ? `is-invalid ${classes.false}` : null
-                  }`}
-                >
-                  Name
-                </label>
-              </div>
+              <FormInput
+                type={"text"}
+                error={errorName}
+                InputName={"Name"}
+                InputNameLabel={"Name"}
+                onChangeHandler={nameChangeHandler}
+              />
               {errorName && (
                 <div className={`text-${errorType}`}>
                   {<NameError />}
-                  {<BlankInputError inputName={"Name"} />}
+                  {/* {<BlankInputError inputName={"Name"} />} */}
                 </div>
               )}
             </div>
             <div className="col-md">
               {/* Surname */}
-              <div className="form-floating mb-3">
-                <input
-                  type="text"
-                  className={`form-control ${
-                    errorSurname ? `is-invalid` : null
-                  }`}
-                  placeholder="User's Surname"
-                  value={Surname}
-                  onChange={surnameChangeHandler}
-                  id="surname"
-                />
-                <label
-                  htmlFor="surname"
-                  className={`${
-                    errorSurname ? `is-invalid ${classes.false}` : null
-                  }`}
-                >
-                  Surname
-                </label>
-              </div>
+              <FormInput
+                type={"text"}
+                error={errorSurname}
+                InputName={"Surname"}
+                InputNameLabel={"Surname"}
+                onChangeHandler={surnameChangeHandler}
+              />
               {errorSurname && (
                 <div className={`text-${errorType}`}>
-                  {/*TODO add a surname error*/}
+                  <SurnameError />
                 </div>
               )}
             </div>
           </div>
-          {/* email */}
-          <div className="form-floating mb-3">
-            <input
-              type="email"
-              className={`form-control ${errorEmail ? `is-invalid` : null}`}
-              placeholder="E-mail"
-              value={Email}
-              onChange={emailChangeHandler}
-              id="mail"
+          {/* E-mail */}
+          <div className="mb-3">
+            <FormInput
+              type={"text"}
+              error={errorEmail}
+              InputName={"Email"}
+              InputNameLabel={"E-mail"}
+              onChangeHandler={emailChangeHandler}
             />
-            <label
-              htmlFor="mail"
-              className={`${errorEmail ? `${classes.false}` : null}`}
-            >
-              E-mail
-            </label>
+            {errorEmail && (
+              <div className={`text-${errorType}`}>
+                <SurnameError />
+              </div>
+            )}
           </div>
           {/* pass */}
           <div className="row mb-3">
             <div className="input-group">
-              <div className="form-floating col-lg-11 col-sm-10">
-                <input
-                  type={typePass ? "text" : "password"}
-                  className={`form-control ${errorPass ? "is-invalid" : null}`}
-                  placeholder="Password"
-                  value={Password}
-                  onChange={passwordChangeHandler}
-                  id="pass"
-                />
-
-                <label
-                  htmlFor="pass"
-                  className={`${
-                    errorPass ? `is-invalid ${classes.false}` : null
-                  }`}
-                >
-                  Password
-                </label>
-              </div>
-
+              <FormInput
+                type={typePass ? "text" : "password"}
+                error={errorPass}
+                InputName={"Password"}
+                InputNameLabel={"Password"}
+                onChangeHandler={passwordChangeHandler}
+                cssClasses={"col-lg-11 col-sm-10"}
+              />
               <button
+                type="button"
                 className={
                   typePass
                     ? `btn ${classes.formButtonRed} col-lg-1 col-sm-2`
@@ -398,27 +346,17 @@ function SignupForm(props) {
           {/* passwcheck */}
           <div className="row mb-3">
             <div className="input-group">
-              <div className="form-floating col-lg-11 col-sm-10">
-                <input
-                  type={typePass ? "text" : "password"}
-                  className={`form-control ${
-                    errorInvalidPass ? "is-invalid" : null
-                  }`}
-                  placeholder="Password"
-                  value={passCheck}
-                  onChange={passwordCheckChangeHandler}
-                  id="passCheck"
-                />
-                <label
-                  htmlFor="passCheck"
-                  className={`${
-                    errorInvalidPass ? `is-invalid ${classes.false}` : null
-                  }`}
-                >
-                  Password Again
-                </label>
-              </div>
+              <FormInput
+                type={typePass ? "text" : "password"}
+                error={errorInvalidPass}
+                InputName={"passAgain"}
+                InputNameLabel={"Password Again"}
+                onChangeHandler={passwordCheckChangeHandler}
+                cssClasses={"col-lg-11 col-sm-10"}
+              />
+
               <button
+                type="button"
                 className={
                   typePass
                     ? `btn ${classes.formButtonRed} col-lg-1 col-sm-2`
@@ -429,46 +367,43 @@ function SignupForm(props) {
                 <span className="fa fa-fw fa-eye" />
               </button>
             </div>
-            {passEq && (
+            {passEqual && (
               <div className={`text-${errorType}`}>
                 "Passwords doesn't match..."
               </div>
             )}
           </div>
-          {/* Phone1 */}
-          <div className="form-floating mb-3">
-            <input
-              type="text"
-              className={`form-control ${errorPhone ? "is-invalid" : null}`}
-              placeholder="(xxx)"
-              value={phone}
-              onChange={phoneChangeHandler}
-              id="phone"
+          {/* Phone */}
+          <div className="mb-3">
+            <FormInputPhone
+              type={"text"}
+              error={errorPhone}
+              InputName={"Phone"}
+              InputNameLabel={"Phone Number"}
+              onChangeHandler={phoneChangeHandler}
+              value={Phone}
             />
-            <label
-              htmlFor="phone"
-              className={`${errorPhone ? `is-invalid ${classes.false}` : null}`}
-            >
-              Phone Number
-            </label>
           </div>
+          {errorPhone && <BlankInputError />}
           <div className="form-floating mb-3">
             <textarea
-              style={{ height: "150px" }}
+              style={{ height: "110px" }}
               type="textarea"
               className="form-control"
               placeholder="Please enter Your Adress..."
-              value={adress}
               onChange={adressChangeHandler}
-              id="adress"
+              id="Adress"
+              name="Adress"
             />
-            <label htmlFor="adress">Adress</label>
+            <label htmlFor="Adress">Adress</label>
           </div>
+          {errorAdress && <BlankInputError />}
         </div>
         <div className="d-grid">
           <button
             type="submit"
             className={`btn col-6 mx-auto ${classes.formButton}`}
+            disabled={isFormValid}
           >
             Sign up
           </button>

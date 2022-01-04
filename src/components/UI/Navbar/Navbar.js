@@ -49,9 +49,9 @@ function Navi(props) {
                       theme ? "light" : "dark"
                     }`}
                   />
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     {basketCountNumber}
-                    <span class="visually-hidden">Shoping Basket</span>
+                    <span className="visually-hidden">Shoping Basket</span>
                   </span>
                 </>
               </li>
@@ -76,9 +76,7 @@ function Navi(props) {
             <span></span>
             <span></span>
           </Navbar.Toggle>
-          <Button variant="bg-transparent">
-            <DarkmodeToggle icon={icon} mode={mode} clickEvent={TMode} />
-          </Button>
+          <DarkmodeToggle icon={icon} mode={mode} clickEvent={TMode} />
           <Navbar.Collapse id="navbarScroll">
             <Nav
               className="mx-auto my-2 my-lg-0"
