@@ -3,14 +3,11 @@ import classes from "./SignupForm.module.css";
 import validator from "validator";
 import Socials from "../UI/Buttons/Socials";
 import BlankInputError from "../Error/BlankInputError";
-import NameError from "../Error/NameError";
-import SurnameError from "../Error/SurnameError";
 import { useDebounce } from "../../hooks/debounce";
 import { SignupReducer, ACTIONS } from "./SignupFormReducer";
 import FormInput from "../FormInput/FormInput";
 import FormInputPhone from "../FormInput/FormInputPhone";
-// import PassError from "../Error/PassError";
-// import MailError from "../Error/MailError";
+import WrongInputError, { switcher } from "../Error/WrongInputError";
 
 const initialState = {
   Name: "",
@@ -30,7 +27,8 @@ const initialState = {
   passAgain: "",
   passEqual: false,
   //!! TODO Change the value of form valid to false
-  isFormValid: true,
+  isFormValid: false,
+  pointsForValid: 0,
   nameRegex: /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/,
   surnameRegex: /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/,
 };
@@ -58,6 +56,7 @@ function SignupForm(props) {
     typePass,
     nameRegex,
     surnameRegex,
+    pointsForValid,
   } = state;
 
   function nameChangeHandler(e) {
@@ -66,7 +65,6 @@ function SignupForm(props) {
       FIELD: e.target.name,
       value: e.target.value,
     });
-    console.log(!Name);
   }
   function nameCheck() {
     //! Name için sorgu
@@ -74,6 +72,8 @@ function SignupForm(props) {
       return dispatch({ type: ACTIONS.NAME_SUCCESS });
     } else {
       if (nameRegex.test(Name) === true) {
+        dispatch({ type: ACTIONS.FORM_VALIDITY_VALID_POINTS });
+        console.log(pointsForValid);
         return dispatch({ type: ACTIONS.NAME_SUCCESS });
       } else {
         return dispatch({ type: ACTIONS.NAME_ERROR });
@@ -96,6 +96,7 @@ function SignupForm(props) {
       return dispatch({ type: ACTIONS.SURNAME_SUCCESS });
     } else {
       if (surnameRegex.test(Surname)) {
+        dispatch({ type: ACTIONS.FORM_VALIDITY_VALID_POINTS });
         return dispatch({ type: ACTIONS.SURNAME_SUCCESS });
       } else {
         return dispatch({ type: ACTIONS.SURNAME_ERROR });
@@ -136,8 +137,7 @@ function SignupForm(props) {
 
   function buttonToggleHandler() {
     dispatch({
-      type: ACTIONS.FORM_INPUT_TYPE,
-      payload: (prevtypePass) => !prevtypePass,
+      type: ACTIONS.PASS_INPUT_TYPE,
     });
   }
 
@@ -152,9 +152,6 @@ function SignupForm(props) {
   function passEqualCheck() {
     if (!passAgain) {
       return dispatch({ type: ACTIONS.PASSWORDEQ_SUCCESS });
-
-      // setErrorType("danger");
-      // return setErrorMessage("Password check area cannot leave blank...");
     } else {
       if (Password === passAgain) {
         return dispatch({ type: ACTIONS.PASSWORDEQ_SUCCESS });
@@ -188,6 +185,13 @@ function SignupForm(props) {
   }
   useDebounce(phoneCheck, 500);
 
+  function disabledHandler() {
+    if (pointsForValid > 7) {
+      dispatch({ type: ACTIONS.FORM_VALIDITY_VALID });
+    }
+  }
+  useDebounce(disabledHandler, 1500);
+
   function adressChangeHandler(e) {
     dispatch({
       type: ACTIONS.FIELD,
@@ -195,8 +199,8 @@ function SignupForm(props) {
       value: e.target.value,
     });
   }
-  //TODO fix the on submit
 
+  //TODO fix the on submit
   function onSubmitHandler(e) {
     e.preventDefault();
     //? Name için Sorgu
@@ -214,32 +218,21 @@ function SignupForm(props) {
     //! adress
     if (Adress === "" || null) {
       return dispatch({ type: ACTIONS.ADRESS_ERROR });
-      //TODO puan sistemi ekle her bir input için 1 puan ver ve değer doğruysa arttır sonuç doğruysa signupı trueya döndür
-      // return setErrorMessage(() => {
-      //   return (
-      //     <div>
-      //       <p>Adress area cannot leave empty...</p>
-      //     </div>
-      //   );
-      // });
     }
-    // localStorage.setItem("isLoggedIn", "true");
 
     //! email sorgu
     if (Email === "" || null) {
       return dispatch({ type: ACTIONS.EMAIL_SUCCESS });
-      // return setErrorMessage("You cannot leave blank Email area...");
     } else {
       if (validator.isEmail(Email) === true) {
         dispatch({ type: ACTIONS.EMAIL_SUCCESS });
       } else {
         return dispatch({ type: ACTIONS.EMAIL_ERROR });
-        // return setErrorMessage(() => {
-        //   return <MailError />;
-        // });
       }
     }
     //TODO add a disable button check
+    //TODO puan sistemi ekle her bir input için 1 puan ver ve değer doğruysa arttır sonuç doğruysa signupı trueya döndür
+    // localStorage.setItem("isLoggedIn", "true");
     console.log(Name, Surname, Password, passAgain, Email, Phone, Adress);
 
     // setName("");
@@ -257,9 +250,7 @@ function SignupForm(props) {
         <div className="row text-center mt-3">
           <h2 className={`fs-1 ${classes.formYazi}`}>Create Account</h2>
         </div>
-
         <div className="row mt-3">
-          {/* //TODO Fix the mobile version */}
           <Socials />
         </div>
         <div className="row mt-2 mb-1">
@@ -276,12 +267,8 @@ function SignupForm(props) {
                 InputNameLabel={"Name"}
                 onChangeHandler={nameChangeHandler}
               />
-              {errorName && (
-                <div className={`text-${errorType}`}>
-                  {<NameError />}
-                  {/* {<BlankInputError inputName={"Name"} />} */}
-                </div>
-              )}
+              {errorName && <WrongInputError ErrorInputName={switcher.name} />}
+              {/*TODO add a blank input var for every input*/}
             </div>
             <div className="col-md">
               {/* Surname */}
@@ -293,9 +280,7 @@ function SignupForm(props) {
                 onChangeHandler={surnameChangeHandler}
               />
               {errorSurname && (
-                <div className={`text-${errorType}`}>
-                  <SurnameError />
-                </div>
+                <WrongInputError ErrorInputName={switcher.surname} />
               )}
             </div>
           </div>
@@ -308,11 +293,7 @@ function SignupForm(props) {
               InputNameLabel={"E-mail"}
               onChangeHandler={emailChangeHandler}
             />
-            {errorEmail && (
-              <div className={`text-${errorType}`}>
-                <SurnameError />
-              </div>
-            )}
+            {errorEmail && <WrongInputError ErrorInputName={switcher.email} />}
           </div>
           {/* pass */}
           <div className="row mb-3">
@@ -338,9 +319,7 @@ function SignupForm(props) {
               </button>
             </div>
             {errorInvalidPass && (
-              <div className={`text-${errorType}`}>
-                {/*TODO add a invalid pass error */}
-              </div>
+              <WrongInputError ErrorInputName={switcher.password} />
             )}
           </div>
           {/* passwcheck */}
@@ -403,7 +382,7 @@ function SignupForm(props) {
           <button
             type="submit"
             className={`btn col-6 mx-auto ${classes.formButton}`}
-            disabled={isFormValid}
+            disabled={pointsForValid > 7 ? false : true}
           >
             Sign up
           </button>

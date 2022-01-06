@@ -23,8 +23,8 @@ export const ACTIONS = {
   PASSWORDEQ_EMPTY: "password equal empty",
   PASSWORDEQ_SUCCESS: "password equal success",
   FORM_VALIDITY_VALID: "form is valid",
-  FORM_VALIDITY_NotVALID: "form is not valid",
-  FORM_INPUT_TYPE: "form input type",
+  FORM_VALIDITY_VALID_POINTS: "form points",
+  PASS_INPUT_TYPE: "form input type",
 };
 export function SignupReducer(state, action) {
   switch (action.type) {
@@ -173,12 +173,13 @@ export function SignupReducer(state, action) {
         ...state,
         isFormValid: true,
       };
-    case ACTIONS.FORM_VALIDITY_NotVALID:
+    case ACTIONS.FORM_VALIDITY_VALID_POINTS:
       return {
         ...state,
-        isFormValid: false,
+
+        pointsForValid: ++state.pointsForValid,
       };
-    case ACTIONS.FORM_INPUT_TYPE:
+    case ACTIONS.PASS_INPUT_TYPE:
       return { ...state, typePass: !state.typePass };
     default:
       return state;

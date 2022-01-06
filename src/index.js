@@ -4,5 +4,10 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/font-awesome/css/font-awesome.min.css";
 import "firebase/auth";
 import App from "./App";
-
-ReactDOM.render(<App />, document.getElementById("root"));
+import { BrowserRouter as Router } from "react-router-dom";
+ReactDOM.render(
+  <Router>
+    <App />
+  </Router>,
+  document.getElementById("root")
+);

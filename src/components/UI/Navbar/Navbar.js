@@ -2,15 +2,16 @@ import DarkmodeToggle from "../Buttons/DarkmodeToggle";
 import { useEffect, useState } from "react";
 import { useTheme, useToggleDark } from "../../../store/darkmode-context";
 import {
-  Button,
+  // Button,
   Container,
-  Form,
-  FormControl,
+  // Form,
+  // FormControl,
   Nav,
   Navbar,
   NavDropdown,
 } from "react-bootstrap";
 import "./Navbar.css";
+import { NavLink } from "react-router-dom";
 function Navi(props) {
   const theme = useTheme();
   const TMode = useToggleDark();
@@ -38,9 +39,11 @@ function Navi(props) {
       >
         <div className="container-fluid">
           <>
-            <div className={`navbar-brand text-${theme ? "light" : "dark"}`}>
-              <h2>Can Tutar</h2>
-            </div>
+            <Navbar.Brand as={NavLink} to="/">
+              <div className={`navbar-brand text-${theme ? "light" : "dark"}`}>
+                <h2>Can Tutar</h2>
+              </div>
+            </Navbar.Brand>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="ms-auto nav-item position-relative me-2">
                 <>
@@ -63,6 +66,7 @@ function Navi(props) {
         bg={!theme ? "light" : "dark"}
         variant={!theme ? "light" : "dark"}
         expand="lg"
+        sticky="top"
       >
         <Container fluid>
           {/* <Navbar.Brand href="#">
@@ -79,11 +83,13 @@ function Navi(props) {
           <DarkmodeToggle icon={icon} mode={mode} clickEvent={TMode} />
           <Navbar.Collapse id="navbarScroll">
             <Nav
-              className="mx-auto my-2 my-lg-0"
+              className="mx-auto my-lg-0"
               style={{ maxHeight: "100px" }}
               navbarScroll
             >
-              <Nav.Link href="#action1">Home</Nav.Link>
+              <Nav.Link as={NavLink} to="/" activeclassname="active">
+                Home
+              </Nav.Link>
               <Nav.Link href="#action2">Link</Nav.Link>
               <NavDropdown title="Link" id="navbarScrollingDropdown">
                 <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
@@ -98,7 +104,7 @@ function Navi(props) {
               <Nav.Link href="#" disabled>
                 Link
               </Nav.Link>
-              <Form className="d-flex">
+              {/* <Form className="d-flex">
                 <FormControl
                   type="search"
                   placeholder="Search"
@@ -106,7 +112,10 @@ function Navi(props) {
                   aria-label="Search"
                 />
                 <Button variant="outline-success">Search</Button>
-              </Form>
+              </Form> */}
+              <Nav.Link as={NavLink} to="/signup" activeclassname="active">
+                Sign Up
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
