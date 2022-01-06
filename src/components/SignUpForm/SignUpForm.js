@@ -1,6 +1,5 @@
 import { useReducer } from "react";
 import classes from "./SignupForm.module.css";
-import validator from "validator";
 import Socials from "../UI/Buttons/Socials";
 import BlankInputError from "../Error/BlankInputError";
 import { useDebounce } from "../../hooks/debounce";
@@ -14,6 +13,7 @@ const initialState = {
   Surname: "",
   Email: "",
   Password: "",
+  passAgain: "",
   Phone: "",
   Adress: "",
   errorType: "",
@@ -24,116 +24,64 @@ const initialState = {
   errorEmail: false,
   errorPass: false,
   typePass: false,
-  passAgain: "",
   passEqual: false,
   //!! TODO Change the value of form valid to false
   isFormValid: false,
   pointsForValid: 0,
-  nameRegex: /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/,
-  surnameRegex: /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/,
 };
 
 function SignupForm(props) {
   const [state, dispatch] = useReducer(SignupReducer, initialState);
   const {
     Name,
-    Email,
     Surname,
+    Email,
     Password,
     passAgain,
     Phone,
     Adress,
-    errorType,
     errorName,
     errorSurname,
     errorPhone,
     errorAdress,
     errorEmail,
     errorPass,
-    errorInvalidPass,
     passEqual,
     isFormValid,
     typePass,
-    nameRegex,
-    surnameRegex,
-    pointsForValid,
   } = state;
 
   function nameChangeHandler(e) {
     dispatch({
-      type: ACTIONS.FIELD,
+      type: ACTIONS.NAME_INPUT_FIELD,
       FIELD: e.target.name,
       value: e.target.value,
     });
   }
-  function nameCheck() {
-    //! Name için sorgu
-    if (!Name) {
-      return dispatch({ type: ACTIONS.NAME_SUCCESS });
-    } else {
-      if (nameRegex.test(Name) === true) {
-        dispatch({ type: ACTIONS.FORM_VALIDITY_VALID_POINTS });
-        console.log(pointsForValid);
-        return dispatch({ type: ACTIONS.NAME_SUCCESS });
-      } else {
-        return dispatch({ type: ACTIONS.NAME_ERROR });
-      }
-    }
-  }
-
-  useDebounce(nameCheck, 500);
-
   function surnameChangeHandler(e) {
     dispatch({
-      type: ACTIONS.FIELD,
+      type: ACTIONS.SURNAME_INPUT_FIELD,
       FIELD: "Surname",
       value: e.target.value.trim(),
     });
   }
-  //!Surname için sorgu
-  function surnameCheck() {
-    if (!Surname) {
-      return dispatch({ type: ACTIONS.SURNAME_SUCCESS });
-    } else {
-      if (surnameRegex.test(Surname)) {
-        dispatch({ type: ACTIONS.FORM_VALIDITY_VALID_POINTS });
-        return dispatch({ type: ACTIONS.SURNAME_SUCCESS });
-      } else {
-        return dispatch({ type: ACTIONS.SURNAME_ERROR });
-      }
-    }
-  }
-  useDebounce(surnameCheck, 500);
 
   function emailChangeHandler(e) {
     dispatch({
-      type: ACTIONS.FIELD,
+      type: ACTIONS.EMAIL_INPUT_FIELD,
       FIELD: "Email",
-      value: e.target.value.trim(),
+      value: e.target.value.toLowerCase().trim(),
     });
   }
+  console.log();
 
   function passwordChangeHandler(e) {
     dispatch({
-      type: ACTIONS.FIELD,
+      type: ACTIONS.PASSWORD_INPUT_FIELD,
       FIELD: "Password",
       value: e.target.value.trim(),
     });
   }
-
-  //!pass sorgu
-  function passwordCheck() {
-    if (!Password) {
-      return dispatch({ type: ACTIONS.PASSWORD_SUCCESS });
-    } else {
-      if (validator.isStrongPassword(Password) === true) {
-        return dispatch({ type: ACTIONS.PASSWORD_SUCCESS });
-      } else {
-        return dispatch({ type: ACTIONS.PASSWORD_ERROR });
-      }
-    }
-  }
-  useDebounce(passwordCheck, 500);
 
   function buttonToggleHandler() {
     dispatch({
@@ -143,58 +91,28 @@ function SignupForm(props) {
 
   function passwordCheckChangeHandler(e) {
     dispatch({
-      type: ACTIONS.FIELD,
+      type: ACTIONS.PASSWORDEQ_INPUT_FIELD,
       FIELD: "passAgain",
       value: e.target.value.trim(),
     });
   }
-  //!passcheck
-  function passEqualCheck() {
-    if (!passAgain) {
-      return dispatch({ type: ACTIONS.PASSWORDEQ_SUCCESS });
-    } else {
-      if (Password === passAgain) {
-        return dispatch({ type: ACTIONS.PASSWORDEQ_SUCCESS });
-      } else {
-        return dispatch({ type: ACTIONS.PASSWORDEQ_ERROR });
-      }
-    }
-  }
-  useDebounce(passEqualCheck, 500);
 
   function phoneChangeHandler(e) {
     const PhoneInput = e.target.value;
     dispatch({
-      type: ACTIONS.PHONE_INPUT,
+      type: ACTIONS.PHONE_INPUT_FIELD,
       FIELD: "Phone",
       value: PhoneInput,
     });
   }
-
-  function phoneCheck() {
-    //!phone number
-    if (Phone === "" || null) {
-      return dispatch({ type: ACTIONS.PHONE_SUCCESS });
-    } else {
-      if (validator.isMobilePhone(Phone) === true) {
-        return dispatch({ type: ACTIONS.PHONE_SUCCESS });
-      } else {
-        dispatch({ type: ACTIONS.PHONE_SUCCESS });
-      }
-    }
-  }
-  useDebounce(phoneCheck, 500);
-
   function disabledHandler() {
-    if (pointsForValid > 7) {
-      dispatch({ type: ACTIONS.FORM_VALIDITY_VALID });
-    }
+    dispatch({ type: ACTIONS.FORM_VALIDITY });
   }
   useDebounce(disabledHandler, 1500);
 
   function adressChangeHandler(e) {
     dispatch({
-      type: ACTIONS.FIELD,
+      type: ACTIONS.ADRESS_INPUT_FIELD,
       FIELD: "Adress",
       value: e.target.value,
     });
@@ -203,45 +121,9 @@ function SignupForm(props) {
   //TODO fix the on submit
   function onSubmitHandler(e) {
     e.preventDefault();
-    //? Name için Sorgu
-    if (Name === "" || null) {
-      return dispatch({ type: ACTIONS.NAME_ERROR });
-    }
-    //? name için sorgu
-    if (Surname === "" || null) {
-      return dispatch({ type: ACTIONS.SURNAME_ERROR });
-    }
 
-    if (Phone === "" || null) {
-      return dispatch({ type: ACTIONS.PHONE_ERROR });
-    }
-    //! adress
-    if (Adress === "" || null) {
-      return dispatch({ type: ACTIONS.ADRESS_ERROR });
-    }
-
-    //! email sorgu
-    if (Email === "" || null) {
-      return dispatch({ type: ACTIONS.EMAIL_SUCCESS });
-    } else {
-      if (validator.isEmail(Email) === true) {
-        dispatch({ type: ACTIONS.EMAIL_SUCCESS });
-      } else {
-        return dispatch({ type: ACTIONS.EMAIL_ERROR });
-      }
-    }
-    //TODO add a disable button check
-    //TODO puan sistemi ekle her bir input için 1 puan ver ve değer doğruysa arttır sonuç doğruysa signupı trueya döndür
-    // localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("isLoggedIn", "true");
     console.log(Name, Surname, Password, passAgain, Email, Phone, Adress);
-
-    // setName("");
-    // setSurname("");
-    // setEmail("");
-    // setPassword("");
-    // setPassCheck("");
-    // setPhone("");
-    // setAdress("");
   }
 
   return (
@@ -287,7 +169,7 @@ function SignupForm(props) {
           {/* E-mail */}
           <div className="mb-3">
             <FormInput
-              type={"text"}
+              type={"email"}
               error={errorEmail}
               InputName={"Email"}
               InputNameLabel={"E-mail"}
@@ -318,7 +200,7 @@ function SignupForm(props) {
                 <span className="fa fa-fw fa-eye" />
               </button>
             </div>
-            {errorInvalidPass && (
+            {errorPass && (
               <WrongInputError ErrorInputName={switcher.password} />
             )}
           </div>
@@ -327,7 +209,7 @@ function SignupForm(props) {
             <div className="input-group">
               <FormInput
                 type={typePass ? "text" : "password"}
-                error={errorInvalidPass}
+                error={passEqual}
                 InputName={"passAgain"}
                 InputNameLabel={"Password Again"}
                 onChangeHandler={passwordCheckChangeHandler}
@@ -347,9 +229,7 @@ function SignupForm(props) {
               </button>
             </div>
             {passEqual && (
-              <div className={`text-${errorType}`}>
-                "Passwords doesn't match..."
-              </div>
+              <WrongInputError ErrorInputName={switcher.passAgain} />
             )}
           </div>
           {/* Phone */}
@@ -363,7 +243,7 @@ function SignupForm(props) {
               value={Phone}
             />
           </div>
-          {errorPhone && <BlankInputError />}
+          {errorPhone && <WrongInputError ErrorInputName={switcher.phone} />}
           <div className="form-floating mb-3">
             <textarea
               style={{ height: "110px" }}
@@ -376,13 +256,13 @@ function SignupForm(props) {
             />
             <label htmlFor="Adress">Adress</label>
           </div>
-          {errorAdress && <BlankInputError />}
+          {errorAdress && <BlankInputError inputName="adress" />}
         </div>
         <div className="d-grid">
           <button
             type="submit"
             className={`btn col-6 mx-auto ${classes.formButton}`}
-            disabled={pointsForValid > 7 ? false : true}
+            disabled={!isFormValid}
           >
             Sign up
           </button>

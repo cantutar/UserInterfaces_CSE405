@@ -20,6 +20,8 @@ function WrongInputError(props) {
           <PassError />
         ) : props.ErrorInputName === switcher.passAgain ? (
           <PassAgainError />
+        ) : props.ErrorInputName === switcher.phone ? (
+          <PhoneError />
         ) : null}
       </div>
     </>
@@ -73,7 +75,7 @@ function PassError(params) {
       <p>
         Your password needs a minimum 1 lower character and uppercase character.
       </p>
-      <p></p>
+      <p>Your password needs a minimum 1 Numbers and Symbols.</p>
     </>
   );
 }
@@ -93,6 +95,13 @@ function EmailError(params) {
           Ex: <ins>test@test.com</ins>
         </span>
       </p>
+    </>
+  );
+}
+function PhoneError(params) {
+  return (
+    <>
+      <p>Please enter a valid phone number...</p>
     </>
   );
 }

@@ -1,81 +1,43 @@
+import validator from "validator";
+
+const nameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/,
+  surnameRegex = /^[A-Z][a-z]*(([,.] |[ '-])[A-Za-z][a-z]*)*(\.?)$/;
 export const ACTIONS = {
   FIELD: "field",
-  NAME_ERROR: "name error",
-  NAME_EMPTY: "name empty field",
-  NAME_SUCCESS: "name success",
-  SURNAME_ERROR: "surname error",
-  SURNAME_EMPTY: "surname empty field",
-  SURNAME_SUCCESS: "surname success",
-  EMAIL_ERROR: "email error",
-  EMAIL_EMPTY: "email empty field",
-  EMAIL_SUCCESS: "email success",
-  PHONE_INPUT: "phone input field",
-  PHONE_ERROR: "phone error",
-  PHONE_EMPTY: "phone empty field",
-  PHONE_SUCCESS: "phone success",
-  ADRESS_ERROR: "adress error",
-  ADRESS_EMPTY: "adress empty",
-  ADRESS_SUCCESS: "adress success",
-  PASSWORD_ERROR: "password error",
-  PASSWORD_EMPTY: "password empty",
-  PASSWORD_SUCCESS: "password success",
-  PASSWORDEQ_ERROR: "password equal error",
-  PASSWORDEQ_EMPTY: "password equal empty",
-  PASSWORDEQ_SUCCESS: "password equal success",
-  FORM_VALIDITY_VALID: "form is valid",
-  FORM_VALIDITY_VALID_POINTS: "form points",
+  NAME_INPUT_FIELD: "name input field",
+  SURNAME_INPUT_FIELD: "surname input field",
+  EMAIL_INPUT_FIELD: "email input field",
+  PHONE_INPUT_FIELD: "phone input field",
+  ADRESS_INPUT_FIELD: "adress input field",
+  PASSWORD_INPUT_FIELD: "password input field",
+  PASSWORDEQ_INPUT_FIELD: "password equal success",
+  FORM_VALIDITY: "form is valid",
   PASS_INPUT_TYPE: "form input type",
+  CLEAN_FORM: "form cleaner",
 };
 export function SignupReducer(state, action) {
   switch (action.type) {
     case ACTIONS.FIELD:
       return { ...state, [action.FIELD]: action.value };
-    case ACTIONS.NAME_ERROR:
+    case ACTIONS.NAME_INPUT_FIELD:
       return {
         ...state,
-        errorName: true,
+        [action.FIELD]: action.value,
+        errorName: !nameRegex.test(action.value),
       };
-    case ACTIONS.NAME_EMPTY:
+    case ACTIONS.SURNAME_INPUT_FIELD:
       return {
         ...state,
-        errorName: true,
+        [action.FIELD]: action.value,
+        errorSurname: !surnameRegex.test(action.value),
       };
-    case ACTIONS.NAME_SUCCESS:
+    case ACTIONS.EMAIL_INPUT_FIELD:
       return {
         ...state,
-        errorName: false,
+        [action.FIELD]: action.value,
+        errorEmail: !validator.isEmail(action.value),
       };
-    case ACTIONS.SURNAME_ERROR:
-      return {
-        ...state,
-        errorSurname: true,
-      };
-    case ACTIONS.SURNAME_EMPTY:
-      return {
-        ...state,
-        errorSurname: true,
-      };
-    case ACTIONS.SURNAME_SUCCESS:
-      return {
-        ...state,
-        errorSurname: false,
-      };
-    case ACTIONS.EMAIL_ERROR:
-      return {
-        ...state,
-        errorEmail: true,
-      };
-    case ACTIONS.EMAIL_EMPTY:
-      return {
-        ...state,
-        errorEmail: true,
-      };
-    case ACTIONS.EMAIL_SUCCESS:
-      return {
-        ...state,
-        errorEmail: false,
-      };
-    case ACTIONS.PHONE_INPUT:
+    case ACTIONS.PHONE_INPUT_FIELD:
       // return { ...state, [action.FIELD]: action.value };
 
       function formatPhoneNumber(value) {
@@ -105,82 +67,54 @@ export function SignupReducer(state, action) {
           6
         )} ${phoneNumber.slice(6, 10)}`;
       }
-      console.log(state);
-
-      return { ...state, [action.FIELD]: formatPhoneNumber(action.value) };
-    case ACTIONS.PHONE_ERROR:
       return {
         ...state,
-        errorPhone: true,
+        [action.FIELD]: formatPhoneNumber(action.value),
+        errorPhone: !validator.isMobilePhone(action.value),
       };
-    case ACTIONS.PHONE_EMPTY:
+    case ACTIONS.ADRESS_INPUT_FIELD:
       return {
         ...state,
-        errorPhone: true,
+        [action.FIELD]: action.value,
+        errorAdress: action.value !== String ? false : true,
       };
-    case ACTIONS.PHONE_SUCCESS:
+    case ACTIONS.PASSWORD_INPUT_FIELD:
       return {
         ...state,
-        errorPhone: false,
+        [action.FIELD]: action.value,
+        errorPass: !validator.isStrongPassword(action.value),
       };
-    case ACTIONS.ADRESS_ERROR:
+    case ACTIONS.PASSWORDEQ_INPUT_FIELD:
       return {
         ...state,
-        errorAdress: true,
+        [action.FIELD]: action.value,
+        passEqual: state.Password !== action.value,
       };
-    case ACTIONS.ADRESS_EMPTY:
+    case ACTIONS.FORM_VALIDITY:
       return {
         ...state,
-        errorAdress: true,
-      };
-    case ACTIONS.ADRESS_SUCCESS:
-      return {
-        ...state,
-        errorAdress: false,
-      };
-    case ACTIONS.PASSWORD_ERROR:
-      return {
-        ...state,
-        errorSurname: true,
-      };
-    case ACTIONS.PASSWORD_EMPTY:
-      return {
-        ...state,
-        errorSurname: true,
-      };
-    case ACTIONS.PASSWORD_SUCCESS:
-      return {
-        ...state,
-        errorSurname: false,
-      };
-    case ACTIONS.PASSWORDEQ_ERROR:
-      return {
-        ...state,
-        passEqual: true,
-      };
-    case ACTIONS.PASSWORDEQ_EMPTY:
-      return {
-        ...state,
-        errorSurname: true,
-      };
-    case ACTIONS.PASSWORDEQ_SUCCESS:
-      return {
-        ...state,
-        passEqual: false,
-      };
-    case ACTIONS.FORM_VALIDITY_VALID:
-      return {
-        ...state,
-        isFormValid: true,
-      };
-    case ACTIONS.FORM_VALIDITY_VALID_POINTS:
-      return {
-        ...state,
-
-        pointsForValid: ++state.pointsForValid,
+        isFormValid:
+          !state.errorName &&
+          !state.errorSurname &&
+          !state.errorEmail &&
+          !state.errorPass &&
+          !state.passEqual &&
+          !state.errorPhone &&
+          !state.errorAdress,
       };
     case ACTIONS.PASS_INPUT_TYPE:
       return { ...state, typePass: !state.typePass };
+    case ACTIONS.CLEAN_FORM:
+      return {
+        ...state,
+        Name: "",
+        Surname: "",
+        Password: "",
+        passAgain: "",
+        Email: "",
+        Phone: "",
+        Adress: "",
+      };
     default:
       return state;
   }
