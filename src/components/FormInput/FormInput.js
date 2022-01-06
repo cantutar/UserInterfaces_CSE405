@@ -1,3 +1,4 @@
+import React from "react";
 import classes from "../SignUpForm/SignupForm.module.css";
 
 export default function FormInput(props) {
@@ -10,6 +11,7 @@ export default function FormInput(props) {
         onChange={props.onChangeHandler}
         id={props.InputName}
         name={props.InputName}
+        ref={props.inputRef}
       />
       <label
         htmlFor={props.InputName}

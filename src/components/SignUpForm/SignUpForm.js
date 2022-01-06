@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
 import classes from "./SignupForm.module.css";
 import Socials from "../UI/Buttons/Socials";
 import BlankInputError from "../Error/BlankInputError";
@@ -7,6 +7,7 @@ import { SignupReducer, ACTIONS } from "./SignupFormReducer";
 import FormInput from "../FormInput/FormInput";
 import FormInputPhone from "../FormInput/FormInputPhone";
 import WrongInputError, { switcher } from "../Error/WrongInputError";
+import { useAuth, signup, auth } from "../../store/auth-context";
 
 const initialState = {
   Name: "",
@@ -26,11 +27,12 @@ const initialState = {
   typePass: false,
   passEqual: false,
   //!! TODO Change the value of form valid to false
-  isFormValid: false,
-  pointsForValid: 0,
+  isFormNotValid: true,
+  isLoading: false,
 };
-
 function SignupForm(props) {
+  const emailRef = useRef();
+  const passwordRef = useRef();
   const [state, dispatch] = useReducer(SignupReducer, initialState);
   const {
     Name,
@@ -47,8 +49,9 @@ function SignupForm(props) {
     errorEmail,
     errorPass,
     passEqual,
-    isFormValid,
+    isFormNotValid,
     typePass,
+    isLoading,
   } = state;
 
   function nameChangeHandler(e) {
@@ -106,7 +109,17 @@ function SignupForm(props) {
     });
   }
   function disabledHandler() {
-    dispatch({ type: ACTIONS.FORM_VALIDITY });
+    if (
+      Name &&
+      Surname &&
+      Password &&
+      passAgain &&
+      Email &&
+      Phone &&
+      Adress !== ""
+    ) {
+      dispatch({ type: ACTIONS.FORM_VALIDITY });
+    }
   }
   useDebounce(disabledHandler, 1500);
 
@@ -121,8 +134,10 @@ function SignupForm(props) {
   //TODO fix the on submit
   function onSubmitHandler(e) {
     e.preventDefault();
-
+    dispatch({ type: ACTIONS.LOADING, value: false });
+    signup(auth, emailRef.current.value, passwordRef.current.value);
     localStorage.setItem("isLoggedIn", "true");
+    dispatch({ type: ACTIONS.LOADING, value: true });
     console.log(Name, Surname, Password, passAgain, Email, Phone, Adress);
   }
 
@@ -174,6 +189,7 @@ function SignupForm(props) {
               InputName={"Email"}
               InputNameLabel={"E-mail"}
               onChangeHandler={emailChangeHandler}
+              inputRef={emailRef}
             />
             {errorEmail && <WrongInputError ErrorInputName={switcher.email} />}
           </div>
@@ -187,6 +203,7 @@ function SignupForm(props) {
                 InputNameLabel={"Password"}
                 onChangeHandler={passwordChangeHandler}
                 cssClasses={"col-lg-11 col-sm-10"}
+                inputRef={passwordRef}
               />
               <button
                 type="button"
@@ -262,7 +279,7 @@ function SignupForm(props) {
           <button
             type="submit"
             className={`btn col-6 mx-auto ${classes.formButton}`}
-            disabled={!isFormValid}
+            disabled={isFormNotValid}
           >
             Sign up
           </button>

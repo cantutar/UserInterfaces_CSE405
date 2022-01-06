@@ -14,6 +14,7 @@ export const ACTIONS = {
   FORM_VALIDITY: "form is valid",
   PASS_INPUT_TYPE: "form input type",
   CLEAN_FORM: "form cleaner",
+  LOADING: "loading",
 };
 export function SignupReducer(state, action) {
   switch (action.type) {
@@ -93,14 +94,14 @@ export function SignupReducer(state, action) {
     case ACTIONS.FORM_VALIDITY:
       return {
         ...state,
-        isFormValid:
-          !state.errorName &&
-          !state.errorSurname &&
-          !state.errorEmail &&
-          !state.errorPass &&
-          !state.passEqual &&
-          !state.errorPhone &&
-          !state.errorAdress,
+        isFormNotValid:
+          state.errorName &&
+          state.errorSurname &&
+          state.errorEmail &&
+          state.errorPass &&
+          state.passEqual &&
+          state.errorPhone &&
+          state.errorAdress,
       };
     case ACTIONS.PASS_INPUT_TYPE:
       return { ...state, typePass: !state.typePass };
@@ -115,6 +116,8 @@ export function SignupReducer(state, action) {
         Phone: "",
         Adress: "",
       };
+    case ACTIONS.LOADING:
+      return { ...state, isLoading: !action.value };
     default:
       return state;
   }
