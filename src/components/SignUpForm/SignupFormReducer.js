@@ -117,7 +117,7 @@ export function SignupReducer(state, action) {
         Adress: "",
       };
     case ACTIONS.LOADING:
-      return { ...state, isLoading: !action.value };
+      return { ...state, isFormNotValid: action.value };
     default:
       return state;
   }

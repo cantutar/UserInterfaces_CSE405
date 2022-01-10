@@ -12,6 +12,9 @@ export default function FormInput(props) {
         id={props.InputName}
         name={props.InputName}
         ref={props.inputRef}
+        onKeyPress={(e) => {
+          e.key === "Enter" && e.preventDefault();
+        }}
       />
       <label
         htmlFor={props.InputName}

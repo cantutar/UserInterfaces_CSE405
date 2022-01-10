@@ -1,13 +1,14 @@
 import { useReducer, useRef } from "react";
-import classes from "./SignupForm.module.css";
-import Socials from "../UI/Buttons/Socials";
-import BlankInputError from "../Error/BlankInputError";
+import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../../hooks/debounce";
-import { SignupReducer, ACTIONS } from "./SignupFormReducer";
+import { auth, useAuth } from "../../store/auth-context";
+import BlankInputError from "../Error/BlankInputError";
+import WrongInputError, { switcher } from "../Error/WrongInputError";
 import FormInput from "../FormInput/FormInput";
 import FormInputPhone from "../FormInput/FormInputPhone";
-import WrongInputError, { switcher } from "../Error/WrongInputError";
-import { useAuth, signup, auth } from "../../store/auth-context";
+import Socials from "../UI/Buttons/Socials";
+import classes from "./SignupForm.module.css";
+import { ACTIONS, SignupReducer } from "./SignupFormReducer";
 
 const initialState = {
   Name: "",
@@ -26,14 +27,14 @@ const initialState = {
   errorPass: false,
   typePass: false,
   passEqual: false,
-  //!! TODO Change the value of form valid to false
   isFormNotValid: true,
-  isLoading: false,
 };
 function SignupForm(props) {
   const emailRef = useRef();
   const passwordRef = useRef();
+  const { signup } = useAuth();
   const [state, dispatch] = useReducer(SignupReducer, initialState);
+  let navigate = useNavigate();
   const {
     Name,
     Surname,
@@ -51,7 +52,6 @@ function SignupForm(props) {
     passEqual,
     isFormNotValid,
     typePass,
-    isLoading,
   } = state;
 
   function nameChangeHandler(e) {
@@ -76,7 +76,6 @@ function SignupForm(props) {
       value: e.target.value.toLowerCase().trim(),
     });
   }
-  console.log();
 
   function passwordChangeHandler(e) {
     dispatch({
@@ -108,6 +107,14 @@ function SignupForm(props) {
       value: PhoneInput,
     });
   }
+  function adressChangeHandler(e) {
+    dispatch({
+      type: ACTIONS.ADRESS_INPUT_FIELD,
+      FIELD: "Adress",
+      value: e.target.value,
+    });
+  }
+
   function disabledHandler() {
     if (
       Name &&
@@ -121,24 +128,27 @@ function SignupForm(props) {
       dispatch({ type: ACTIONS.FORM_VALIDITY });
     }
   }
-  useDebounce(disabledHandler, 1500);
-
-  function adressChangeHandler(e) {
-    dispatch({
-      type: ACTIONS.ADRESS_INPUT_FIELD,
-      FIELD: "Adress",
-      value: e.target.value,
-    });
-  }
+  useDebounce(disabledHandler, 100);
 
   //TODO fix the on submit
-  function onSubmitHandler(e) {
+  async function onSubmitHandler(e) {
     e.preventDefault();
+    try {
+      dispatch({ type: ACTIONS.LOADING, value: true });
+      return await signup(
+        auth,
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+      // return setIsLoggedIn(true);
+    } catch (error) {
+      alert(error);
+    }
     dispatch({ type: ACTIONS.LOADING, value: false });
-    signup(auth, emailRef.current.value, passwordRef.current.value);
+
     localStorage.setItem("isLoggedIn", "true");
-    dispatch({ type: ACTIONS.LOADING, value: true });
-    console.log(Name, Surname, Password, passAgain, Email, Phone, Adress);
+    navigate("/");
+    console.log(Name, Surname, Email, Password, passAgain, Phone, Adress);
   }
 
   return (
@@ -294,5 +304,5 @@ function SignupForm(props) {
     </>
   );
 }
-
+//Vahitcan1.  || isFormNotValid || !currentUser
 export default SignupForm;

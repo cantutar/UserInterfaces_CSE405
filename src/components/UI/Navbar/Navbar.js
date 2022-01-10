@@ -1,7 +1,9 @@
 import DarkmodeToggle from "../Buttons/DarkmodeToggle";
 import { useEffect, useState } from "react";
 import { useTheme, useToggleDark } from "../../../store/darkmode-context";
+import { useAuth } from "../../../store/auth-context";
 import {
+  Button,
   // Button,
   Container,
   // Form,
@@ -13,6 +15,8 @@ import {
 import "./Navbar.css";
 import { NavLink } from "react-router-dom";
 function Navi(props) {
+  const { currentUser, signout } = useAuth();
+  // console.log(currentUser?.email);
   const theme = useTheme();
   const TMode = useToggleDark();
   const [mode, setMode] = useState("dark");
@@ -58,6 +62,7 @@ function Navi(props) {
                   </span>
                 </>
               </li>
+              <li>{currentUser?.email}</li>
             </ul>
           </>
         </div>
@@ -113,9 +118,20 @@ function Navi(props) {
                 />
                 <Button variant="outline-success">Search</Button>
               </Form> */}
-              <Nav.Link as={NavLink} to="/signup" activeclassname="active">
-                Sign Up
-              </Nav.Link>
+              {!currentUser ? (
+                <Nav.Link
+                  as={NavLink}
+                  to="/signup"
+                  disabled={currentUser}
+                  activeclassname="active"
+                >
+                  Sign Up
+                </Nav.Link>
+              ) : (
+                <Button type="button" onClick={signout}>
+                  sign out
+                </Button>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>

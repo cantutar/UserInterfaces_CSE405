@@ -2,8 +2,9 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FirebaseApp from "../firebaseApp";
 
 FirebaseApp();
@@ -13,19 +14,30 @@ const AuthContext = React.createContext();
 export function useAuth() {
   return useContext(AuthContext);
 }
-export async function signup(auth, email, password) {
+export function signup(auth, email, password) {
   try {
-    return await createUserWithEmailAndPassword(auth, email, password);
+    return createUserWithEmailAndPassword(auth, email, password);
   } catch (error) {
-    alert(error);
+    alert(JSON.stringify(error.code));
   }
 }
-export function AuthProvider(props) {
+export function signout(auth) {
+  signOut(auth);
+}
+
+export default function AuthProvider(props) {
   const [currentUser, setCurrentUser] = useState();
   const value = {
     currentUser,
     signup,
+    signout,
   };
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return unsub;
+  }, []);
 
   return (
     <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>

@@ -9,6 +9,9 @@ export default function FormInputPhone(props) {
         onChange={props.onChangeHandler}
         id={props.InputName}
         value={props.value}
+        onKeyPress={(e) => {
+          e.key === "Enter" && e.preventDefault();
+        }}
       />
       <label
         htmlFor={props.InputName}
