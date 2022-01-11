@@ -1,6 +1,7 @@
 import classNames from "./FormPage.module.css";
 import bg from "../../assets/images/background1.jpg";
 import SignupForm from "../SignUpForm/SignUpForm";
+import LoginForm from "../LoginForm/LoginForm";
 
 function FormPage(props) {
   return (
@@ -9,9 +10,15 @@ function FormPage(props) {
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col">
             <div className={`card my-4 ${classNames.cardBoxCam}`}>
-              <div className="row g-0">
+              <div
+                className={`row g-0 ${
+                  props.onPage === "signup"
+                    ? ""
+                    : "d-flex justify-content-center align-items-center h-100"
+                }`}
+              >
                 <div className="col-xl-6 px-4">
-                  <SignupForm />
+                  {props.onPage === "signup" ? <SignupForm /> : <LoginForm />}
                 </div>
                 <div className="col-xl-6 d-none d-xl-block">
                   <img

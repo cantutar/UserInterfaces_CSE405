@@ -22,6 +22,8 @@ function WrongInputError(props) {
           <PassAgainError />
         ) : props.ErrorInputName === switcher.phone ? (
           <PhoneError />
+        ) : props.ErrorFirebase === switcher.firebase ? (
+          <FirebaseError onError={props.onError} />
         ) : null}
       </div>
     </>
@@ -102,6 +104,13 @@ function PhoneError(params) {
   return (
     <>
       <p>Please enter a valid phone number...</p>
+    </>
+  );
+}
+function FirebaseError(props) {
+  return (
+    <>
+      <p>{props.onError}</p>
     </>
   );
 }

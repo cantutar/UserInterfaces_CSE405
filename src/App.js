@@ -5,24 +5,26 @@ import Navbar from "./components/UI/Navbar/Navbar";
 import Page404 from "./pages/404Page";
 import Home from "./pages/Home";
 import UserPanel from "./pages/UserPanel";
-import AuthProvider, { useAuth } from "./store/auth-context";
+import { useAuth } from "./store/auth-context";
 import DarkModeContextProvider from "./store/darkmode-context";
 
 function App() {
+  const { currentUser } = useAuth();
   return (
-    <AuthProvider>
+    <>
       <DarkModeContextProvider>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<FormPage onPage="signup" />} />
           <Route element={<ProtectedRoutes />}>
-            <Route path="/user" element={<UserPanel />} />
+            <Route path="/signup" element={<FormPage onPage="signup" />} />
+            <Route path="/login" element={<FormPage onPage="login" />} />
           </Route>
+          {currentUser && <Route path="/user" element={<UserPanel />} />}
           <Route path="*" element={<Page404 />} />
         </Routes>
       </DarkModeContextProvider>
-    </AuthProvider>
+    </>
   );
 }
 

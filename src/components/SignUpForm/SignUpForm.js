@@ -1,7 +1,7 @@
 import { useReducer, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../../hooks/debounce";
-import { auth, useAuth } from "../../store/auth-context";
+import { firebaseErrors, useAuth } from "../../store/auth-context";
 import BlankInputError from "../Error/BlankInputError";
 import WrongInputError, { switcher } from "../Error/WrongInputError";
 import FormInput from "../FormInput/FormInput";
@@ -28,6 +28,7 @@ const initialState = {
   typePass: false,
   passEqual: false,
   isFormNotValid: true,
+  isLoading: false,
 };
 function SignupForm(props) {
   const emailRef = useRef();
@@ -51,6 +52,7 @@ function SignupForm(props) {
     errorPass,
     passEqual,
     isFormNotValid,
+    isLoading,
     typePass,
   } = state;
 
@@ -130,25 +132,23 @@ function SignupForm(props) {
   }
   useDebounce(disabledHandler, 100);
 
-  //TODO fix the on submit
-  async function onSubmitHandler(e) {
+  function onSubmitHandler(e) {
     e.preventDefault();
     try {
       dispatch({ type: ACTIONS.LOADING, value: true });
-      return await signup(
-        auth,
+      signup(
         emailRef.current.value,
-        passwordRef.current.value
-      );
-      // return setIsLoggedIn(true);
+        passwordRef.current.value,
+        `${Name} ${Surname}`
+      )
+        .then(() => navigate("/"))
+        .catch((err) => alert(firebaseErrors[err.code]));
+      dispatch({ type: ACTIONS.LOADING, value: false });
+      console.log(Name, Surname, Email, Password, passAgain, Phone, Adress);
+      return navigate("/");
     } catch (error) {
       alert(error);
     }
-    dispatch({ type: ACTIONS.LOADING, value: false });
-
-    localStorage.setItem("isLoggedIn", "true");
-    navigate("/");
-    console.log(Name, Surname, Email, Password, passAgain, Phone, Adress);
   }
 
   return (
@@ -175,7 +175,6 @@ function SignupForm(props) {
                 onChangeHandler={nameChangeHandler}
               />
               {errorName && <WrongInputError ErrorInputName={switcher.name} />}
-              {/*TODO add a blank input var for every input*/}
             </div>
             <div className="col-md">
               {/* Surname */}
@@ -289,7 +288,7 @@ function SignupForm(props) {
           <button
             type="submit"
             className={`btn col-6 mx-auto ${classes.formButton}`}
-            disabled={isFormNotValid}
+            disabled={isLoading || isFormNotValid}
           >
             Sign up
           </button>
@@ -304,5 +303,4 @@ function SignupForm(props) {
     </>
   );
 }
-//Vahitcan1.  || isFormNotValid || !currentUser
 export default SignupForm;

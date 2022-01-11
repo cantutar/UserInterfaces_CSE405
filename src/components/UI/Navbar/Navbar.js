@@ -16,7 +16,6 @@ import "./Navbar.css";
 import { NavLink } from "react-router-dom";
 function Navi(props) {
   const { currentUser, signout } = useAuth();
-  // console.log(currentUser?.email);
   const theme = useTheme();
   const TMode = useToggleDark();
   const [mode, setMode] = useState("dark");
@@ -33,10 +32,10 @@ function Navi(props) {
       document.body.style.background = "white";
     }
   }, [theme]);
-  let basketCountNumber = 1;
+  // let basketCountNumber = 1;
   return (
     <>
-      <header
+      {/* <header
         className={`navbar navbar-expand-lg border-bottom bg-${
           !theme ? "light" : "dark"
         }`}
@@ -62,11 +61,23 @@ function Navi(props) {
                   </span>
                 </>
               </li>
-              <li>{currentUser?.email}</li>
+              <NavDropdown
+                title={currentUser?.email}
+                id="navbarScrollingDropdown"
+              >
+                <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
+                <NavDropdown.Item href="#action4">
+                  Another action
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item href="#action5">
+                  Something else here
+                </NavDropdown.Item>
+              </NavDropdown>
             </ul>
           </>
         </div>
-      </header>
+      </header> */}
       <Navbar
         bg={!theme ? "light" : "dark"}
         variant={!theme ? "light" : "dark"}
@@ -74,9 +85,9 @@ function Navi(props) {
         sticky="top"
       >
         <Container fluid>
-          {/* <Navbar.Brand href="#">
-            <DarkmodeToggle icon={icon} mode={mode} clickEvent={TMode} />
-          </Navbar.Brand> */}
+          <Navbar.Brand as={NavLink} to="/">
+            <h2>Can Tutar</h2>
+          </Navbar.Brand>
           <Navbar.Toggle
             aria-controls="navbarScroll"
             className={!theme ? "light" : "dark"}
@@ -85,17 +96,18 @@ function Navi(props) {
             <span></span>
             <span></span>
           </Navbar.Toggle>
-          <DarkmodeToggle icon={icon} mode={mode} clickEvent={TMode} />
           <Navbar.Collapse id="navbarScroll">
             <Nav
-              className="mx-auto my-lg-0"
+              className="ms-auto my-lg-0"
               style={{ maxHeight: "100px" }}
               navbarScroll
             >
               <Nav.Link as={NavLink} to="/" activeclassname="active">
                 Home
               </Nav.Link>
-              <Nav.Link href="#action2">Link</Nav.Link>
+              <Nav.Link as={NavLink} to="/user">
+                Link
+              </Nav.Link>
               <NavDropdown title="Link" id="navbarScrollingDropdown">
                 <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action4">
@@ -111,26 +123,56 @@ function Navi(props) {
               </Nav.Link>
               {/* <Form className="d-flex">
                 <FormControl
-                  type="search"
-                  placeholder="Search"
-                  className="me-2"
-                  aria-label="Search"
+                type="search"
+                placeholder="Search"
+                className="me-2"
+                aria-label="Search"
                 />
                 <Button variant="outline-success">Search</Button>
               </Form> */}
+
+              <DarkmodeToggle icon={icon} mode={mode} clickEvent={TMode} />
               {!currentUser ? (
-                <Nav.Link
-                  as={NavLink}
-                  to="/signup"
-                  disabled={currentUser}
-                  activeclassname="active"
-                >
-                  Sign Up
-                </Nav.Link>
+                <>
+                  <Nav.Link
+                    as={NavLink}
+                    to="/signup"
+                    disabled={currentUser}
+                    activeclassname="active"
+                  >
+                    Sign Up
+                  </Nav.Link>
+                  <Nav.Link
+                    as={NavLink}
+                    to="/login"
+                    disabled={currentUser}
+                    activeclassname="active"
+                  >
+                    Sign in
+                  </Nav.Link>
+                </>
               ) : (
-                <Button type="button" onClick={signout}>
-                  sign out
-                </Button>
+                <>
+                  <NavDropdown
+                    title={currentUser?.email}
+                    id="navbarScrollingDropdown"
+                  >
+                    <NavDropdown.Item as={NavLink} to="/user">
+                      My Profile
+                    </NavDropdown.Item>
+                    <NavDropdown.Item href="#action4">
+                      Another action
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item
+                      as={Button}
+                      type="button"
+                      onClick={signout}
+                    >
+                      sign out
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </>
               )}
             </Nav>
           </Navbar.Collapse>

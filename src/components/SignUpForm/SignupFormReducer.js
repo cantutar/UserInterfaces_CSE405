@@ -12,13 +12,14 @@ export const ACTIONS = {
   PASSWORD_INPUT_FIELD: "password input field",
   PASSWORDEQ_INPUT_FIELD: "password equal success",
   FORM_VALIDITY: "form is valid",
-  PASS_INPUT_TYPE: "form input type",
   CLEAN_FORM: "form cleaner",
+  PASS_INPUT_TYPE: "form input type",
   LOADING: "loading",
 };
 export function SignupReducer(state, action) {
   switch (action.type) {
     case ACTIONS.FIELD:
+      console.log(state);
       return { ...state, [action.FIELD]: action.value };
     case ACTIONS.NAME_INPUT_FIELD:
       return {
