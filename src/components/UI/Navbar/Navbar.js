@@ -83,6 +83,7 @@ function Navi(props) {
         variant={!theme ? "light" : "dark"}
         expand="lg"
         sticky="top"
+        className="py-0"
       >
         <Container fluid>
           <Navbar.Brand as={NavLink} to="/">

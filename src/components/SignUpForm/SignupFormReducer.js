@@ -15,6 +15,7 @@ export const ACTIONS = {
   CLEAN_FORM: "form cleaner",
   PASS_INPUT_TYPE: "form input type",
   LOADING: "loading",
+  RECAPTCHA: "recaptcha",
 };
 export function SignupReducer(state, action) {
   switch (action.type) {
@@ -102,6 +103,7 @@ export function SignupReducer(state, action) {
           state.errorPass &&
           state.passEqual &&
           state.errorPhone &&
+          state.recaptchaValue &&
           state.errorAdress,
       };
     case ACTIONS.PASS_INPUT_TYPE:
@@ -119,6 +121,8 @@ export function SignupReducer(state, action) {
       };
     case ACTIONS.LOADING:
       return { ...state, isFormNotValid: action.value };
+    case ACTIONS.RECAPTCHA:
+      return { ...state, recaptchaValue: !action.value };
     default:
       return state;
   }

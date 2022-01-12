@@ -44,6 +44,7 @@ export default function AuthProvider(props) {
   const [currentUser, setCurrentUser] = useState();
   const [verifiedEmail, setVerifiedEmail] = useState();
   const [displayName, setDisplayName] = useState();
+
   const value = {
     currentUser,
     verifiedEmail,

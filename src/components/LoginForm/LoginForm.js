@@ -7,6 +7,7 @@ import WrongInputError, { switcher } from "../Error/WrongInputError";
 import { useDebounce } from "../../hooks/debounce";
 import { useAuth, firebaseErrors } from "../../store/auth-context";
 import { useNavigate } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 //TODO fix css
 
 const initialState = {
@@ -17,13 +18,15 @@ const initialState = {
   loginTypePass: false,
   isLoginLoading: false,
   isLoginFormNotValid: true,
+  recaptchaValue: true,
 };
 function LoginForm(props) {
-  const { signin } = useAuth();
+  const { signin, reValue } = useAuth();
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(LoginReducer, initialState);
   const emailRef = useRef();
   const passwordRef = useRef();
+  const reCAPTCHARef = useRef();
   const {
     loginEmail,
     loginPassword,
@@ -32,8 +35,14 @@ function LoginForm(props) {
     loginTypePass,
     isLoginLoading,
     isLoginFormNotValid,
+    recaptchaValue,
   } = state;
-
+  function onRecaptchaChangeHandler() {
+    dispatch({
+      type: actions.RECAPTCHA,
+      value: reCAPTCHARef.current.getValue(),
+    });
+  }
   function emailChangeHandler(e) {
     dispatch({
       type: actions.EMAIL_INPUT_FIELD,
@@ -52,22 +61,24 @@ function LoginForm(props) {
     return dispatch({ type: actions.PASS_INPUT_TYPE });
   }
   function disabledHandler() {
-    if (loginEmail && loginPassword) {
+    //loginEmail && loginPassword
+    if (loginEmail && loginPassword && !recaptchaValue) {
       dispatch({ type: actions.FORM_VALIDITY });
     }
   }
   useDebounce(disabledHandler, 100);
   function onSubmitHandler(e) {
     e.preventDefault();
+    props.onShow();
+    console.log(reValue);
     try {
       dispatch({ type: actions.LOADING, value: true });
       signin(emailRef.current.value, passwordRef.current.value)
         .then(() => navigate("/"))
         .catch((err) => alert(firebaseErrors[err.code]));
       dispatch({ type: actions.LOADING, value: false });
-
-      // return navigate("/");
     } catch (error) {
+      dispatch({ type: actions.LOADING, value: false });
       alert(error);
     }
   }
@@ -122,6 +133,13 @@ function LoginForm(props) {
             </button>
           </div>
         </div>
+        <div className="d-flex justify-content-center my-3">
+          <ReCAPTCHA
+            sitekey={process.env.REACT_APP_RECAPTCHA_TEST_SITE_KEY}
+            onChange={onRecaptchaChangeHandler}
+            ref={reCAPTCHARef}
+          />
+        </div>
         <div className="d-grid">
           <button
             type="submit"
@@ -135,5 +153,4 @@ function LoginForm(props) {
     </>
   );
 }
-
 export default LoginForm;

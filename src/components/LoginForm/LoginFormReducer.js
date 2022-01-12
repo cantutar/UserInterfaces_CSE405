@@ -3,6 +3,7 @@ export const actions = {
   EMAIL_INPUT_FIELD: "email input field",
   PASSWORD_INPUT_FIELD: "password input field",
   PASS_INPUT_TYPE: "form input type change",
+  RECAPTCHA: "recaptcha",
   FORM_VALIDITY: "form is valid",
   LOADING: "loading",
 };
@@ -20,10 +21,13 @@ export function LoginReducer(state, action) {
         [action.FIELD]: action.value,
         errorLoginPass: !validator.isStrongPassword(action.value),
       };
+    case actions.RECAPTCHA:
+      return { ...state, recaptchaValue: !action.value };
     case actions.FORM_VALIDITY:
       return {
         ...state,
-        isLoginFormNotValid: state.errorLoginEmail && state.errorLoginPass,
+        isLoginFormNotValid:
+          state.recaptchaValue && state.errorLoginEmail && state.errorLoginPass,
       };
     case actions.PASS_INPUT_TYPE:
       console.log(state);

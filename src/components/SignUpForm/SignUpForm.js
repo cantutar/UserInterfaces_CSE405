@@ -1,4 +1,5 @@
 import { useReducer, useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../../hooks/debounce";
 import { firebaseErrors, useAuth } from "../../store/auth-context";
@@ -28,12 +29,15 @@ const initialState = {
   typePass: false,
   passEqual: false,
   isFormNotValid: true,
+  recaptchaValue: false,
   isLoading: false,
 };
 function SignupForm(props) {
   const emailRef = useRef();
   const passwordRef = useRef();
+  const reCAPTCHARef = useRef();
   const { signup } = useAuth();
+
   const [state, dispatch] = useReducer(SignupReducer, initialState);
   let navigate = useNavigate();
   const {
@@ -54,7 +58,14 @@ function SignupForm(props) {
     isFormNotValid,
     isLoading,
     typePass,
+    recaptchaValue,
   } = state;
+  function onRecaptchaChangeHandler() {
+    dispatch({
+      type: ACTIONS.RECAPTCHA,
+      value: reCAPTCHARef.current.getValue(),
+    });
+  }
 
   function nameChangeHandler(e) {
     dispatch({
@@ -125,6 +136,7 @@ function SignupForm(props) {
       passAgain &&
       Email &&
       Phone &&
+      !recaptchaValue &&
       Adress !== ""
     ) {
       dispatch({ type: ACTIONS.FORM_VALIDITY });
@@ -134,6 +146,7 @@ function SignupForm(props) {
 
   function onSubmitHandler(e) {
     e.preventDefault();
+    props.onShow();
     try {
       dispatch({ type: ACTIONS.LOADING, value: true });
       signup(
@@ -283,6 +296,13 @@ function SignupForm(props) {
             <label htmlFor="Adress">Adress</label>
           </div>
           {errorAdress && <BlankInputError inputName="adress" />}
+        </div>
+        <div className="d-flex justify-content-center my-3">
+          <ReCAPTCHA
+            sitekey={process.env.REACT_APP_RECAPTCHA_TEST_SITE_KEY}
+            onChange={onRecaptchaChangeHandler}
+            ref={reCAPTCHARef}
+          />
         </div>
         <div className="d-grid">
           <button
